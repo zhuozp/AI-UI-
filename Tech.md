@@ -113,108 +113,311 @@ graph TD
 
 ```mermaid
 graph TB
-    subgraph "前端接入层 - Frontend Access Layer"
-        A1[Cursor IDE插件]
-        A2[Web管理控制台]
-        A3[CLI命令行工具]
-        A4[REST API接口]
+    subgraph "用户接入层 - User Access Layer"
+        A1[Cursor IDE插件<br/>💻 开发时即时测试]
+        A2[Web管理控制台<br/>🎛️ 测试管理和监控]
+        A3[CLI测试脚本<br/>🔄 全回归自动化]
+        A4[REST API接口<br/>🔌 第三方系统集成]
     end
     
     subgraph "业务编排层 - Business Orchestration Layer"
-        B1[测试任务调度器]
-        B2[执行计划管理器]
-        B3[结果收集处理器]
-        B4[用户会话管理器]
+        B1[测试任务调度器<br/>调度测试执行]
+        B2[执行计划管理器<br/>管理测试计划]
+        B3[结果收集处理器<br/>处理测试结果]
+        B4[用户会话管理器<br/>管理用户状态]
     end
     
     subgraph "AI决策核心层 - AI Decision Core Layer"
-        C1[自然语言处理引擎]
-        C2[任务规划器]
-        C3[策略选择器]
-        C4[执行协调器]
-        C5[结果验证器]
+        C1[自然语言处理引擎<br/>GPT-4.0解析指令]
+        C2[任务规划器<br/>制定执行计划]
+        C3[策略选择器<br/>选择执行策略]
+        C4[执行协调器<br/>协调组件执行]
+        C5[结果验证器<br/>验证执行结果]
     end
     
     subgraph "多模态理解层 - Multimodal Understanding Layer"
-        D1[视觉分析服务]
-        D2[结构化数据解析器]
-        D3[元素定位引擎]
-        D4[上下文融合器]
-        D5[置信度评估器]
+        D1[视觉分析服务<br/>Gemini-2.5-Pro识别]
+        D2[结构化数据解析器<br/>UI树解析]
+        D3[元素定位引擎<br/>混合定位策略]
+        D4[上下文融合器<br/>多源数据融合]
+        D5[置信度评估器<br/>结果可信度评估]
     end
     
     subgraph "设备操作层 - Device Operation Layer"
-        E1[Android操作适配器]
-        E2[iOS操作适配器]
-        E3[设备连接管理器]
-        E4[操作执行器]
-        E5[状态监控器]
+        E1[Android操作适配器<br/>🤖 ADB + UIAutomator]
+        E2[iOS操作适配器<br/>🍎 WebDriverAgent + XCTest]
+        E3[设备连接管理器<br/>设备连接池管理]
+        E4[操作执行器<br/>具体操作执行]
+        E5[状态监控器<br/>设备状态监控]
     end
     
     subgraph "基础设施层 - Infrastructure Layer"
-        F1[Mobile-MCP服务器]
-        F2[Midscene框架]
-        F3[设备池管理器]
-        F4[配置管理中心]
-        F5[日志聚合器]
+        F1[Mobile-MCP服务器<br/>MCP协议服务]
+        F2[Midscene框架<br/>核心测试框架]
+        F3[设备池管理器<br/>设备资源管理]
+        F4[配置管理中心<br/>配置集中管理]
+        F5[日志聚合器<br/>日志收集处理]
+    end
+    
+    subgraph "设备驱动层 - Device Driver Layer"
+        G1[ADB服务<br/>Android设备通信]
+        G2[WebDriverAgent<br/>iOS设备通信]
+        G3[Android模拟器<br/>Emulator]
+        G4[iOS模拟器<br/>Simulator]
+        G5[真机设备<br/>Physical Devices]
     end
     
     subgraph "外部服务层 - External Services Layer"
-        G1[Gemini-2.5-Pro API]
-        G2[GPT-4.0 API]
-        G3[Android设备/模拟器]
-        G4[iOS设备/模拟器]
-        G5[监控告警服务]
+        H1[Gemini-2.5-Pro API<br/>视觉理解模型]
+        H2[GPT-4.0 API<br/>自然语言处理]
+        H3[监控告警服务<br/>系统监控]
+        H4[CI/CD系统<br/>持续集成]
     end
     
     subgraph "数据存储层 - Data Storage Layer"
-        H1[PostgreSQL主数据库]
-        H2[Redis缓存集群]
-        H3[MinIO对象存储]
-        H4[InfluxDB时序数据库]
+        I1[PostgreSQL主数据库<br/>结构化数据]
+        I2[Redis缓存集群<br/>缓存加速]
+        I3[MinIO对象存储<br/>截图/视频文件]
+        I4[InfluxDB时序数据库<br/>监控指标]
     end
     
-    A1 --> B1
+    %% 用户接入层连接
+    A1 --> B4
     A2 --> B2
-    A3 --> B3
-    A4 --> B4
+    A3 --> B1
+    A4 --> B3
     
-    B1 --> C1
-    B2 --> C2
-    B3 --> C3
-    B4 --> C4
+    %% 业务编排层连接
+    B1 --> C2
+    B2 --> C1
+    B3 --> C4
+    B4 --> C3
     
+    %% AI决策核心层连接
     C1 --> D1
     C2 --> D2
     C3 --> D3
     C4 --> D4
     C5 --> D5
     
-    D1 --> E1
-    D2 --> E2
-    D3 --> E3
-    D4 --> E4
+    %% 多模态理解层连接
+    D1 --> E2
+    D2 --> E1
+    D3 --> E4
+    D4 --> E3
     D5 --> E5
     
-    E1 --> F1
-    E2 --> F2
+    %% 设备操作层连接
+    E1 --> G1
+    E2 --> G2
     E3 --> F3
-    E4 --> F4
+    E4 --> F2
     E5 --> F5
     
+    %% 基础设施层连接
     F1 --> G1
     F2 --> G2
     F3 --> G3
-    F4 --> G4
-    F5 --> G5
+    F3 --> G4
+    F3 --> G5
     
-    B1 --> H1
-    D4 --> H2
-    E4 --> H3
-    C4 --> H4
+    %% 外部服务连接
+    C1 --> H2
+    D1 --> H1
+    F5 --> H3
+    B1 --> H4
+    
+    %% 数据存储连接
+    B2 --> I1
+    D4 --> I2
+    E4 --> I3
+    F5 --> I4
+    
+    style A1 fill:#e1f5fe
+    style A2 fill:#e8f5e8
+    style A3 fill:#fff3e0
+    style A4 fill:#ffebee
+    style E1 fill:#90EE90
+    style E2 fill:#FFB6C1
+    style G1 fill:#DDA0DD
+    style G2 fill:#F0E68C
 ```
 
-#### 2.1.2 系统依赖关系矩阵
+#### 2.1.2 核心组件详细说明
+
+让我针对您关心的几个关键组件进行详细说明：
+
+##### **用户接入层组件说明**
+
+**🔌 REST API接口 - 第三方系统集成**
+- **用途**: 为外部系统提供编程式调用能力
+- **是否必要**: **非常必要**，主要用于：
+  ```typescript
+  // CI/CD系统集成调用
+  POST /api/v1/test/execute
+  {
+    "testSuite": "regression_test_suite",
+    "devices": ["android-pixel-6", "ios-iphone-14"],
+    "environment": "staging"
+  }
+  
+  // Jenkins流水线调用
+  curl -X POST "https://ai-ui-test.company.com/api/v1/test/batch" \
+    -H "Authorization: Bearer ${API_TOKEN}" \
+    -d '{"testCases": ["TC001", "TC002"], "parallel": true}'
+  
+  // 监控系统状态查询
+  GET /api/v1/devices/status
+  GET /api/v1/test/results/{execution_id}
+  ```
+
+**🔄 CLI测试脚本 - 全回归自动化**
+- **是的，就是您说的全回归脚本**，典型使用场景：
+  ```bash
+  # 全回归测试触发
+  ./run-regression-tests.sh --suite=full --parallel --devices=all
+  
+  # 定时任务调用
+  0 2 * * * /opt/ai-ui-test/bin/nightly-regression.sh
+  
+  # CI/CD流水线中的调用
+  ai-ui-test run \
+    --config=prod-config.yml \
+    --testplan=regression-plan.json \
+    --report-format=junit \
+    --output=./test-results/
+  ```
+
+**🎛️ Web管理控制台 - 测试管理和监控**
+- **功能定位**: 可视化的测试管理平台
+- **主要功能**:
+  ```mermaid
+  graph TB
+      WebConsole[Web管理控制台]
+      WebConsole --> TestMgmt[测试用例管理]
+      WebConsole --> ExecMgmt[执行计划管理]
+      WebConsole --> DeviceMgmt[设备池管理]
+      WebConsole --> ResultView[结果可视化]
+      WebConsole --> Monitor[实时监控]
+      WebConsole --> Config[系统配置]
+      
+      TestMgmt --> CreateTest[创建测试用例]
+      TestMgmt --> EditTest[编辑测试脚本]
+      TestMgmt --> ImportTest[批量导入]
+      
+      ExecMgmt --> Schedule[定时调度]
+      ExecMgmt --> BatchRun[批量执行]
+      ExecMgmt --> Pipeline[流水线管理]
+      
+      DeviceMgmt --> DeviceStatus[设备状态查看]
+      DeviceMgmt --> ResourceAlloc[资源分配]
+      DeviceMgmt --> Maintenance[设备维护]
+  ```
+
+##### **设备驱动层组件说明 (新增)**
+
+**🤖 ADB服务 - Android设备通信**
+- **作用**: Android Debug Bridge，Android设备的核心通信桥梁
+- **必要性**: **绝对必要**，是Android自动化的基础
+- **功能**:
+  ```bash
+  # 设备连接和管理
+  adb devices
+  adb connect 192.168.1.100:5555
+  
+  # UI操作命令
+  adb shell input tap 500 1000
+  adb shell input text "hello world"
+  adb shell input swipe 100 1000 100 500
+  
+  # UI结构获取
+  adb shell uiautomator dump
+  adb shell screencap -p /sdcard/screen.png
+  ```
+
+**🍎 WebDriverAgent - iOS设备通信**
+- **作用**: iOS设备自动化的WebDriver实现
+- **必要性**: **iOS自动化必需**，苹果官方XCTest框架的封装
+- **功能**:
+  ```javascript
+  // iOS设备操作
+  await driver.tap(500, 1000);
+  await driver.setValue('textField', 'hello world');
+  await driver.swipe(100, 1000, 100, 500);
+  
+  // 获取页面结构
+  const source = await driver.getPageSource();
+  const screenshot = await driver.getScreenshot();
+  ```
+
+##### **实际使用场景对比**
+
+| 使用场景 | 接入方式 | 用户群体 | 使用频率 |
+|---------|----------|----------|----------|
+| **开发调试** | Cursor IDE插件 | 开发工程师 | 每日多次 |
+| **测试管理** | Web管理控制台 | 测试团队、管理者 | 每日使用 |
+| **全回归测试** | CLI测试脚本 | CI/CD系统、运维 | 定时执行 |
+| **系统集成** | REST API接口 | 外部系统、第三方 | 按需调用 |
+
+##### **典型工作流程**
+
+```mermaid
+sequenceDiagram
+    participant Developer as 开发工程师
+    participant Cursor as Cursor IDE
+    participant WebConsole as Web控制台
+    participant CLI as CLI脚本
+    participant CICD as CI/CD系统
+    participant ADB as ADB/WebDriverAgent
+    participant Devices as 移动设备
+    
+    Note over Developer, Devices: 日常开发测试流程
+    Developer->>Cursor: 编写代码后即时测试
+    Cursor->>ADB: 通过MCP调用设备操作
+    ADB->>Devices: 执行具体操作
+    
+    Note over Developer, Devices: 测试管理流程
+    Developer->>WebConsole: 创建/管理测试用例
+    WebConsole->>CLI: 触发批量测试执行
+    CLI->>ADB: 批量设备操作
+    
+    Note over Developer, Devices: 持续集成流程  
+    CICD->>CLI: 定时触发全回归测试
+    CLI->>ADB: 并行执行多设备测试
+    CLI->>WebConsole: 上报测试结果
+```
+
+##### **您的问题解答总结**
+
+**Q1: REST API接口是干嘛用的？是否有必要？**
+- **A**: **非常必要**！主要用于：
+  - CI/CD系统自动调用测试
+  - Jenkins等流水线工具集成
+  - 监控系统查询状态
+  - 第三方系统数据对接
+
+**Q2: 是否有必要补充ADB、WebDriverAgent到架构里？**
+- **A**: **绝对必要**！已经补充到"设备驱动层"：
+  - ADB是Android设备通信的核心
+  - WebDriverAgent是iOS设备自动化的基础
+  - 没有它们就无法操作移动设备
+
+**Q3: 全回归UI自动化测试脚本和CLI命令行工具是一个意思吗？**
+- **A**: **是的，完全一样**！CLI测试脚本就是用来：
+  - 触发全回归测试执行
+  - 定时任务调度
+  - CI/CD流水线集成
+  - 批量测试管理
+
+**Q4: Web管理控制台怎么理解？**
+- **A**: 这是一个**可视化的测试管理平台**，提供：
+  - 测试用例的创建和管理
+  - 执行计划的配置和调度
+  - 设备池的监控和管理
+  - 测试结果的可视化展示
+  - 系统配置和用户权限管理
+
+#### 2.1.3 系统依赖关系矩阵
 
 | 层级 | 上级依赖 | 同级依赖 | 下级依赖 |
 |------|----------|----------|----------|
