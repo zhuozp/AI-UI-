@@ -1,650 +1,699 @@
-# Midscene.js Android 自动化技术架构深度分析
+# Midscene.js 完整项目架构分析
 
-## 📋 目录
-- [项目概述](#项目概述)
-- [整体架构](#整体架构)
-- [Android 实现机制](#android-实现机制)
-- [AI 视觉理解流程](#ai-视觉理解流程)
-- [核心组件详解](#核心组件详解)
-- [工作流程分析](#工作流程分析)
-- [技术优势](#技术优势)
-- [性能优化](#性能优化)
-- [总结](#总结)
-
-## 项目概述
-
-Midscene.js 是一个**视觉驱动的 AI 操作器**，专为 Web、Android、iOS 自动化测试而设计。其核心创新在于：
-
-- 🖥️ **Visual-First**: 通过屏幕截图而非 DOM/控件树进行界面理解
-- 🤖 **AI-Powered**: 集成视觉语言模型进行智能元素识别和操作规划
-- 🌐 **Cross-Platform**: 提供统一 API 适配多平台
-- 📝 **Natural Language**: 支持自然语言描述的自动化脚本
-
-## 整体架构
-
-### 系统架构图
+## 🏗️ 项目整体架构概览
 
 ```mermaid
 graph TB
     subgraph "用户层"
-        A[用户脚本/测试用例]
-        B[自然语言指令]
+        U1[测试开发者]
+        U2[自动化工程师]  
+        U3[AI 助手用户]
     end
     
-    subgraph "Midscene Core"
-        C[Agent]
-        D[Insight Engine]
-        E[Task Executor]
-        F[YAML Player]
+    subgraph "应用层 Applications"
+        A1[Chrome Extension<br/>浏览器插件]
+        A2[Playground<br/>可视化调试]
+        A3[Android Playground<br/>移动端调试]
+        A4[Recorder Form<br/>录制工具]
+        A5[Report Viewer<br/>报告查看器]
+        A6[Site Documentation<br/>文档站点]
     end
     
-    subgraph "AI 服务层"
-        G[视觉语言模型<br/>Qwen3-VL/UI-TARS/Gemini]
-        H[Planning Engine]
-        I[Visual Understanding]
-    end
-    
-    subgraph "平台适配层"
-        J[AndroidDevice]
-        K[WebInterface]
-        L[iOSDevice]
+    subgraph "SDK 包层 Packages"
+        P1[CLI<br/>命令行工具]
+        P2[Core<br/>核心引擎]
+        P3[Android<br/>安卓支持]
+        P4[iOS<br/>苹果支持]
+        P5[Web Integration<br/>Web 集成]
+        P6[MCP<br/>模型协议]
+        P7[Shared<br/>共享组件]
+        P8[Playground<br/>服务组件]
+        P9[Recorder<br/>录制组件]
+        P10[Visualizer<br/>可视化组件]
     end
     
     subgraph "设备控制层"
-        M[ADB Bridge]
-        N[YADB Input Tool]
-        O[Screenshot Service]
-        P[Touch/Gesture Handler]
+        D1[Browser<br/>浏览器控制]
+        D2[Android Device<br/>Android 设备]
+        D3[iOS Device<br/>iOS 设备]
+        D4[WebDriver<br/>Web 驱动]
     end
     
-    subgraph "Android 设备"
-        Q[Android 系统]
-        R[目标应用]
+    subgraph "AI 服务层"
+        AI1[OpenAI GPT-4V]
+        AI2[Anthropic Claude]
+        AI3[Qwen-VL]
+        AI4[UI-TARS]
+        AI5[Gemini Vision]
+        AI6[Doubao Vision]
     end
     
-    A --> C
-    B --> C
-    C --> D
-    C --> E
-    C --> F
-    D --> G
-    D --> H
-    D --> I
-    C --> J
-    J --> M
-    J --> N
-    J --> O
-    J --> P
-    M --> Q
-    N --> Q
-    O --> Q
-    P --> Q
-    Q --> R
+    U1 --> A1
+    U1 --> P1
+    U2 --> A2
+    U2 --> A3
+    U3 --> P6
     
-    G -.-> I
-    H -.-> E
+    A1 --> P2
+    A2 --> P8
+    A3 --> P3
+    A4 --> P9
+    A5 --> P10
+    
+    P1 --> P2
+    P2 --> P7
+    P3 --> P2
+    P4 --> P2
+    P5 --> P2
+    P6 --> P2
+    P8 --> P2
+    P9 --> P2
+    P10 --> P2
+    
+    P2 --> D1
+    P3 --> D2
+    P4 --> D3
+    P5 --> D4
+    
+    P2 --> AI1
+    P2 --> AI2
+    P2 --> AI3
+    P2 --> AI4
+    P2 --> AI5
+    P2 --> AI6
 ```
 
-### 核心设计理念
+## 📦 包结构与依赖关系
 
-```mermaid
-mindmap
-  root((Midscene.js))
-    视觉驱动
-      截图获取
-      AI 视觉理解
-      坐标映射
-    跨平台统一
-      抽象接口设计
-      统一 Agent API
-      设备无关操作
-    AI 集成
-      多模型支持
-      自然语言交互
-      智能规划执行
-    高性能优化
-      截图缓存
-      坐标缓存
-      批量操作
-```
-
-## Android 实现机制
-
-### Android 技术栈图
+### 核心包依赖图
 
 ```mermaid
 graph TD
-    subgraph "Midscene Android 层次结构"
-        A[AndroidAgent]
-        B[AndroidDevice]
-        C[ADB Connection]
-        D[Screenshot Service]
-        E[Input System]
-        F[YADB Tool]
+    subgraph "应用程序 Apps"
+        APP1[chrome-extension]
+        APP2[playground] 
+        APP3[android-playground]
+        APP4[recorder-form]
+        APP5[report]
+        APP6[site]
     end
     
-    subgraph "底层技术"
-        G[appium-adb]
-        H[ADB Protocol]
-        I[Android Debug Bridge]
-        J[Android System Services]
+    subgraph "SDK 包"
+        PKG1[cli]
+        PKG2[core] 
+        PKG3[android]
+        PKG4[ios]
+        PKG5[web-integration]
+        PKG6[mcp]
+        PKG7[shared]
+        PKG8[playground-pkg]
+        PKG9[recorder]
+        PKG10[visualizer]
+        PKG11[webdriver]
+        PKG12[evaluation]
+        PKG13[android-playground-pkg]
+        PKG14[ios-playground-pkg]
     end
     
-    A --> B
-    B --> C
-    B --> D
-    B --> E
-    E --> F
-    C --> G
-    G --> H
-    H --> I
-    I --> J
+    %% 应用依赖
+    APP1 --> PKG2
+    APP1 --> PKG9
+    APP1 --> PKG7
     
-    style A fill:#e1f5fe
-    style B fill:#f3e5f5
-    style F fill:#fff3e0
-```
-
-### 关键实现细节
-
-#### 1. ADB 连接管理
-
-```typescript
-// 连接架构
-interface ADBConnectionFlow {
-  deviceDiscovery: "通过 getConnectedDevices() 发现设备";
-  connectionInit: "创建 ADB 实例，支持本地/远程连接";
-  proxyCreation: "创建 ADB 代理，管理连接生命周期";
-  errorHandling: "连接失败重试和错误恢复";
-}
-```
-
-#### 2. 屏幕截图机制
-
-```mermaid
-flowchart LR
-    A[截图请求] --> B{是否指定显示器ID?}
-    B -->|是| C[Shell screencap命令]
-    B -->|否| D[ADB takeScreenshot]
-    C --> E[保存到临时文件]
-    D --> F[直接获取Buffer]
-    E --> G[读取文件内容]
-    F --> H[验证PNG格式]
-    G --> H
-    H --> I[转换为Base64]
-    I --> J[返回截图数据]
+    APP2 --> PKG8
+    APP2 --> PKG2
+    APP2 --> PKG7
     
-    style C fill:#ffcdd2
-    style D fill:#c8e6c9
-    style H fill:#fff3e0
-```
-
-#### 3. YADB 输入优化
-
-```mermaid
-sequenceDiagram
-    participant App as 应用程序
-    participant Midscene as Midscene
-    participant YADB as YADB Tool
-    participant Android as Android System
+    APP3 --> PKG3
+    APP3 --> PKG13
+    APP3 --> PKG7
     
-    App->>Midscene: keyboardType("中文输入")
-    Midscene->>Midscene: 检查IME策略
-    alt 非ASCII字符且配置YADB
-        Midscene->>YADB: 推送YADB到设备
-        Midscene->>YADB: execYadb(content)
-        YADB->>Android: 直接操作输入框
-    else ASCII字符或未配置YADB
-        Midscene->>Android: 标准ADB输入
-    end
-    Android-->>App: 文本输入完成
+    APP4 --> PKG9
+    APP4 --> PKG2
+    
+    APP5 --> PKG10
+    APP5 --> PKG7
+    
+    %% SDK 包依赖
+    PKG1 --> PKG2
+    PKG1 --> PKG7
+    
+    PKG2 --> PKG7
+    PKG2 --> PKG9
+    
+    PKG3 --> PKG2
+    PKG3 --> PKG7
+    
+    PKG4 --> PKG2  
+    PKG4 --> PKG7
+    
+    PKG5 --> PKG2
+    PKG5 --> PKG7
+    
+    PKG6 --> PKG2
+    PKG6 --> PKG3
+    PKG6 --> PKG5
+    
+    PKG8 --> PKG2
+    PKG8 --> PKG7
+    
+    PKG9 --> PKG7
+    
+    PKG10 --> PKG7
+    
+    PKG11 --> PKG2
+    
+    PKG12 --> PKG2
+    PKG12 --> PKG7
+    
+    PKG13 --> PKG3
+    
+    PKG14 --> PKG4
+    
+    style PKG2 fill:#e1f5fe
+    style PKG7 fill:#fff3e0
 ```
 
-## AI 视觉理解流程
+## 🔧 核心技术架构
 
-### AI 处理架构
+### Agent 架构层次
 
 ```mermaid
 graph TB
-    subgraph "输入层"
-        A[屏幕截图<br/>Base64]
-        B[用户指令<br/>自然语言]
-        C[上下文信息<br/>历史对话]
+    subgraph "Agent 抽象层"
+        A1[Agent<T>]
+        A2[AndroidAgent]
+        A3[PuppeteerAgent] 
+        A4[PlaywrightAgent]
+        A5[iOSAgent]
+    end
+    
+    subgraph "Interface 抽象层"
+        I1[AbstractInterface]
+        I2[AndroidDevice]
+        I3[PuppeteerPage]
+        I4[PlaywrightPage] 
+        I5[iOSDevice]
+    end
+    
+    subgraph "核心组件层"
+        C1[TaskExecutor<br/>任务执行器]
+        C2[Insight<br/>AI 理解引擎]
+        C3[ModelConfigManager<br/>模型配置管理]
+        C4[TaskCache<br/>任务缓存]
+        C5[ScriptPlayer<br/>YAML 执行器]
+    end
+    
+    subgraph "AI 处理层"
+        AI1[AiLocateElement<br/>元素定位]
+        AI2[AiExtractElementInfo<br/>信息提取]
+        AI3[plan/uiTarsPlanning<br/>操作规划]
+        AI4[callAI<br/>模型调用]
+    end
+    
+    subgraph "设备控制层"
+        D1[ADB Bridge]
+        D2[Puppeteer API]
+        D3[Playwright API]
+        D4[iOS WebDriverAgent]
+        D5[YADB Input Tool]
+    end
+    
+    A1 --> I1
+    A2 --> I2
+    A3 --> I3
+    A4 --> I4
+    A5 --> I5
+    
+    A1 --> C1
+    A1 --> C2
+    A1 --> C3
+    A1 --> C4
+    
+    C1 --> AI1
+    C1 --> AI2
+    C1 --> AI3
+    C2 --> AI1
+    C2 --> AI2
+    C5 --> C1
+    
+    AI1 --> AI4
+    AI2 --> AI4
+    AI3 --> AI4
+    
+    I2 --> D1
+    I2 --> D5
+    I3 --> D2
+    I4 --> D3
+    I5 --> D4
+    
+    style A1 fill:#e1f5fe
+    style C2 fill:#f3e5f5
+    style AI4 fill:#fff3e0
+```
+
+### AI 模型集成架构
+
+```mermaid
+graph TB
+    subgraph "AI 调用入口"
+        E1[aiAction]
+        E2[aiQuery]
+        E3[aiAssert]
+        E4[aiLocate]
+        E5[aiWaitFor]
     end
     
     subgraph "AI 处理引擎"
-        D[Insight Engine]
-        E[Visual Understanding]
-        F[Element Detection]
-        G[Action Planning]
+        P1[TaskExecutor.action]
+        P2[Insight.locate]
+        P3[Insight.extract] 
+        P4[setupPlanningContext]
+        P5[createPlanningTask]
     end
     
-    subgraph "模型服务"
-        H[视觉语言模型]
-        I[UI-TARS专用模型]
-        J[通用多模态模型]
+    subgraph "AI 服务调用"
+        S1[callAI]
+        S2[callAIWithObjectResponse]
+        S3[callAIWithStringResponse]
+        S4[createChatClient]
     end
     
-    subgraph "输出层"  
-        K[元素坐标]
-        L[操作序列]
-        M[置信度评分]
-        N[错误信息]
+    subgraph "模型适配层"
+        M1[OpenAI Adapter]
+        M2[Anthropic Adapter]
+        M3[Qwen-VL Adapter]
+        M4[UI-TARS Adapter]
+        M5[Gemini Adapter]
     end
     
-    A --> D
-    B --> D
-    C --> D
-    D --> E
-    E --> F
-    E --> G
-    F --> H
-    G --> I
-    F --> J
-    G --> J
-    H --> K
-    I --> L
-    J --> M
-    H --> N
+    subgraph "消息格式化"
+        F1[UIContext Builder]
+        F2[Screenshot Processor]
+        F3[Prompt Constructor]
+        F4[Response Parser]
+    end
     
-    style H fill:#e8f5e8
-    style I fill:#fff3e0
-    style J fill:#f3e5f5
+    subgraph "外部 AI 服务"
+        X1[OpenAI API]
+        X2[Anthropic API]
+        X3[Qwen API]
+        X4[Google AI API]
+        X5[ByteDance API]
+    end
+    
+    E1 --> P1
+    E2 --> P3
+    E3 --> P3
+    E4 --> P2
+    E5 --> P3
+    
+    P1 --> P4
+    P1 --> P5
+    P2 --> S2
+    P3 --> S2
+    
+    P4 --> F1
+    P5 --> S1
+    
+    S1 --> S4
+    S2 --> S1
+    S3 --> S1
+    
+    S4 --> M1
+    S4 --> M2
+    S4 --> M3
+    S4 --> M4
+    S4 --> M5
+    
+    F1 --> F2
+    F1 --> F3
+    S1 --> F4
+    
+    M1 --> X1
+    M2 --> X2
+    M3 --> X3
+    M4 --> X3
+    M5 --> X4
+    
+    style P1 fill:#e1f5fe
+    style F2 fill:#fff3e0
+    style X1 fill:#f3e5f5
 ```
 
-### 深度思考机制
+## 🖥️ 平台支持架构
 
-```mermaid
-sequenceDiagram
-    participant User as 用户指令
-    participant Insight as Insight Engine
-    participant AI as 视觉语言模型
-    participant Device as Android设备
-    
-    User->>Insight: "点击登录按钮"
-    Insight->>AI: 第一阶段：区域定位
-    AI-->>Insight: 返回可能区域坐标
-    Insight->>Device: 获取区域截图
-    Device-->>Insight: 区域图像数据
-    Insight->>AI: 第二阶段：精确定位
-    AI-->>Insight: 返回精确元素坐标
-    Insight-->>User: 定位结果
-```
-
-## 核心组件详解
-
-### AndroidDevice 组件架构
-
-```mermaid
-classDiagram
-    class AndroidDevice {
-        -deviceId: string
-        -adb: ADB
-        -yadbPushed: boolean
-        -devicePixelRatio: number
-        -scalingRatio: number
-        -cachedScreenSize: object
-        +connect(): Promise~ADB~
-        +screenshotBase64(): Promise~string~
-        +mouseClick(x, y): Promise~void~
-        +keyboardType(text): Promise~void~
-        +launch(uri): Promise~AndroidDevice~
-        +execYadb(content): Promise~void~
-    }
-    
-    class AbstractInterface {
-        <<interface>>
-        +interfaceType: InterfaceType
-        +actionSpace(): DeviceAction[]
-        +screenshotBase64(): Promise~string~
-    }
-    
-    class AndroidAgent {
-        +aiAction(instruction): Promise~void~
-        +aiQuery(query): Promise~any~
-        +aiAssert(assertion): Promise~void~
-        +launch(uri): Promise~void~
-        +runAdbShell(command): Promise~string~
-    }
-    
-    AndroidDevice --|> AbstractInterface
-    AndroidAgent o-- AndroidDevice
-```
-
-### 动作空间定义
-
-```mermaid
-graph LR
-    subgraph "Device Actions"
-        A[Tap/Click]
-        B[Double Click]
-        C[Input Text]
-        D[Scroll]
-        E[Drag & Drop]
-        F[Key Press]
-        G[Long Press]
-        H[Swipe]
-    end
-    
-    subgraph "AI Actions"
-        I[aiAction]
-        J[aiQuery]
-        K[aiAssert]
-        L[aiWaitFor]
-        M[aiLocate]
-    end
-    
-    subgraph "执行流程"
-        N[自然语言解析]
-        O[动作规划]
-        P[坐标映射]
-        Q[设备执行]
-    end
-    
-    I --> N
-    J --> N
-    K --> N
-    N --> O
-    O --> P
-    P --> A
-    P --> B
-    P --> C
-    A --> Q
-    B --> Q
-    C --> Q
-```
-
-## 工作流程分析
-
-### 完整执行流程
-
-```mermaid
-sequenceDiagram
-    participant User as 用户
-    participant Agent as AndroidAgent
-    participant Device as AndroidDevice
-    participant AI as AI模型
-    participant ADB as ADB服务
-    participant Android as Android设备
-    
-    User->>Agent: agent.aiAction("点击登录按钮")
-    Agent->>Device: 获取当前截图
-    Device->>ADB: takeScreenshot()
-    ADB->>Android: 执行截图命令
-    Android-->>ADB: 返回截图数据
-    ADB-->>Device: 截图Buffer
-    Device-->>Agent: Base64截图
-    
-    Agent->>AI: 发送截图+指令
-    AI->>AI: 视觉理解+规划
-    AI-->>Agent: 返回元素坐标
-    
-    Agent->>Device: mouseClick(x, y)
-    Device->>ADB: input tap x y
-    ADB->>Android: 执行点击
-    Android-->>ADB: 执行完成
-    ADB-->>Device: 操作结果
-    Device-->>Agent: 执行成功
-    Agent-->>User: 操作完成
-```
-
-### 错误处理流程
-
-```mermaid
-flowchart TD
-    A[执行AI操作] --> B{截图成功?}
-    B -->|否| C[重试截图]
-    C --> D{重试次数超限?}
-    D -->|是| E[抛出截图异常]
-    D -->|否| B
-    
-    B -->|是| F[AI分析截图]
-    F --> G{找到目标元素?}
-    G -->|否| H[报告定位失败]
-    G -->|是| I[执行设备操作]
-    
-    I --> J{操作成功?}
-    J -->|否| K[重试操作]
-    K --> L{重试次数超限?}
-    L -->|是| M[抛出操作异常]
-    L -->|否| I
-    
-    J -->|是| N[操作完成]
-    
-    style E fill:#ffcdd2
-    style H fill:#ffcdd2
-    style M fill:#ffcdd2
-    style N fill:#c8e6c9
-```
-
-## 技术优势
-
-### 对比传统UI自动化
-
-```mermaid
-graph LR
-    subgraph "传统方法"
-        A1[Appium]
-        A2[控件树遍历]
-        A3[XML解析]
-        A4[XPath定位]
-        A5[脆弱性高]
-    end
-    
-    subgraph "Midscene方法"
-        B1[视觉驱动]
-        B2[AI理解]
-        B3[截图分析]
-        B4[自然语言]
-        B5[适应性强]
-    end
-    
-    subgraph "优势对比"
-        C1[跨应用兼容]
-        C2[界面变化适应]
-        C3[开发效率提升]
-        C4[维护成本降低]
-        C5[学习门槛降低]
-    end
-    
-    A1 -.-> A2 -.-> A3 -.-> A4 -.-> A5
-    B1 --> B2 --> B3 --> B4 --> B5
-    B5 --> C1
-    B5 --> C2
-    B4 --> C3
-    B2 --> C4
-    B4 --> C5
-    
-    style A5 fill:#ffcdd2
-    style B5 fill:#c8e6c9
-```
-
-### 性能优化策略
-
-```mermaid
-mindmap
-  root((性能优化))
-    截图优化
-      缓存机制
-      分辨率调整
-      格式压缩
-    AI调用优化
-      批量处理
-      结果缓存
-      模型选择
-    连接优化
-      连接池管理
-      异步处理
-      超时控制
-    输入优化
-      YADB加速
-      批量输入
-      智能等待
-```
-
-## 性能优化
-
-### 缓存机制
+### 多平台设备控制
 
 ```mermaid
 graph TB
-    subgraph "多层缓存架构"
-        A[截图缓存]
-        B[AI响应缓存]
-        C[设备信息缓存]
-        D[坐标映射缓存]
+    subgraph "统一 Agent 接口"
+        UA[Agent<AbstractInterface>]
     end
     
-    subgraph "缓存策略"
-        E[LRU淘汰]
-        F[TTL过期]
-        G[内容Hash]
-        H[智能失效]
+    subgraph "Web 平台"
+        W1[PuppeteerAgent]
+        W2[PlaywrightAgent] 
+        W3[ChromeExtensionAgent]
+        W4[WebDriverAgent]
     end
     
-    A --> E
-    B --> F
-    C --> G
-    D --> H
+    subgraph "移动平台"
+        M1[AndroidAgent]
+        M2[iOSAgent]
+    end
     
-    style A fill:#e1f5fe
-    style B fill:#f3e5f5
-    style C fill:#fff3e0
-    style D fill:#e8f5e8
+    subgraph "设备抽象层"
+        D1[PuppeteerPage]
+        D2[PlaywrightPage]
+        D3[ChromeBridgePage]
+        D4[AndroidDevice]
+        D5[iOSDevice]
+    end
+    
+    subgraph "底层驱动"
+        L1[Puppeteer SDK]
+        L2[Playwright SDK]
+        L3[Chrome Extension API]
+        L4[ADB + YADB]
+        L5[WebDriverAgent + XCTest]
+    end
+    
+    subgraph "操作系统"
+        O1[Chrome/Edge/Safari]
+        O2[Firefox]
+        O3[Android OS]
+        O4[iOS/iPadOS]
+    end
+    
+    UA --> W1
+    UA --> W2  
+    UA --> W3
+    UA --> W4
+    UA --> M1
+    UA --> M2
+    
+    W1 --> D1
+    W2 --> D2
+    W3 --> D3
+    M1 --> D4
+    M2 --> D5
+    
+    D1 --> L1
+    D2 --> L2
+    D3 --> L3
+    D4 --> L4
+    D5 --> L5
+    
+    L1 --> O1
+    L2 --> O1
+    L2 --> O2
+    L3 --> O1
+    L4 --> O3
+    L5 --> O4
+    
+    style UA fill:#e1f5fe
+    style D4 fill:#fff3e0
+    style D5 fill:#f3e5f5
 ```
 
-### YADB性能提升
+## 🔄 完整数据流架构
 
-| 输入方式 | 性能对比 | 适用场景 |
-|---------|---------|---------|
-| 标准ADB input | 基准速度 | 英文、数字 |
-| YADB (中文) | **3-5x faster** | 中文、特殊字符 |
-| YADB (批量) | **10x faster** | 大段文本输入 |
-
-## 支持的AI模型
-
-### 模型对比
-
-```mermaid
-graph TD
-    subgraph "开源模型"
-        A[Qwen3-VL]
-        B[UI-TARS]
-    end
-    
-    subgraph "商业模型"
-        C[GPT-4V]
-        D[Gemini-2.5-Pro]
-        E[Doubao-1.6-Vision]
-    end
-    
-    subgraph "特性对比"
-        F[准确率]
-        G[速度]
-        H[成本]
-        I[部署方式]
-    end
-    
-    A --> F
-    B --> F
-    C --> F
-    A --> G
-    B --> G
-    A --> H
-    C --> H
-    A --> I
-    
-    style A fill:#c8e6c9
-    style B fill:#c8e6c9
-    style H fill:#fff3e0
-```
-
-## 实际应用案例
-
-### 电商应用测试示例
+### 端到端执行流程
 
 ```mermaid
 sequenceDiagram
-    participant Test as 测试脚本
-    participant Agent as AndroidAgent
-    participant eBay as eBay应用
+    participant User as 用户脚本
+    participant Agent as Agent
+    participant TaskExec as TaskExecutor
+    participant Insight as Insight Engine
+    participant Device as Device Layer
+    participant AI as AI Service
+    participant OS as 操作系统
     
-    Test->>Agent: aiAction("搜索耳机")
-    Agent->>eBay: 识别搜索框并输入
-    eBay-->>Agent: 显示搜索结果
+    User->>Agent: agent.aiAction("点击登录按钮")
     
-    Test->>Agent: aiWaitFor("商品列表加载完成")
-    Agent->>eBay: 等待页面状态
+    Agent->>TaskExec: taskExecutor.action(prompt)
+    TaskExec->>TaskExec: createPlanningTask()
+    TaskExec->>Insight: setupPlanningContext()
     
-    Test->>Agent: aiQuery("获取商品信息")
-    Agent->>eBay: 分析页面内容
-    eBay-->>Agent: 返回商品数据
-    Agent-->>Test: [{title:"...", price:99.99}]
+    Insight->>Device: screenshotBase64()
+    Device->>OS: 系统截图调用
+    OS-->>Device: PNG Buffer
+    Device-->>Insight: Base64 截图
     
-    Test->>Agent: aiAssert("左侧有分类筛选")
-    Agent->>eBay: 验证页面元素
-    Agent-->>Test: 断言通过
+    Insight->>Insight: 构建 UIContext
+    Insight->>AI: plan(instruction, context)
+    
+    AI->>AI: 图像分析和理解
+    AI-->>Insight: 操作计划 JSON
+    
+    Insight-->>TaskExec: PlanningActions[]
+    TaskExec->>TaskExec: convertPlanToExecutable()
+    
+    loop 执行每个操作
+        TaskExec->>Device: 执行具体操作
+        Device->>OS: 系统操作调用
+        OS-->>Device: 操作结果
+        Device-->>TaskExec: 执行完成
+    end
+    
+    TaskExec-->>Agent: ExecutionResult
+    Agent-->>User: 操作完成
+    
+    Note over Agent: 生成执行报告
 ```
 
-### 复杂场景处理
-
-```javascript
-// 多步骤自动化示例
-await agent.aiAction('打开天气应用');
-await agent.aiAction('点击左上角加号，进入搜索页面，搜索"杭州"');
-await agent.aiAction('如果屏幕上有一天没有雨，点击安卓系统"主页"按钮返回主屏幕');
-await agent.aiAction('打开地图应用，搜索"西湖"，点击搜索按钮');
-await agent.aiAction('点击"路线"按钮，进入路线规划页面');
-await agent.aiAction('点击"开始"按钮开始导航');
-```
-
-## 总结
-
-### 核心创新点
-
-1. **视觉优先**：摆脱了传统基于控件树的限制
-2. **AI集成**：自然语言交互，降低自动化门槛
-3. **跨平台统一**：一套API适配多个平台
-4. **性能优化**：YADB等工具提升执行效率
-5. **智能适应**：AI理解能力应对界面变化
-
-### 技术影响
+### 截图与AI处理详细流程
 
 ```mermaid
-graph LR
-    subgraph "传统测试"
-        A1[脚本维护成本高]
-        A2[技术门槛高]
-        A3[适应性差]
+graph TB
+    subgraph "截图获取层"
+        S1[用户调用 aiAction]
+        S2[Agent.getUIContext]
+        S3[commonContextParser]
+        S4[Device.screenshotBase64]
+        S5[ADB/WebDriver 调用]
+        S6[系统截图 API]
     end
     
-    subgraph "Midscene测试"
-        B1[自然语言描述]
-        B2[AI自动适应]
-        B3[跨应用兼容]
+    subgraph "数据处理层"
+        D1[PNG Buffer 验证]
+        D2[Base64 编码]
+        D3[UIContext 构建]
+        D4[截图缩放处理]
+        D5[格式标准化]
     end
     
-    subgraph "带来的变化"
-        C1[测试效率提升]
-        C2[维护成本降低]
-        C3[应用范围扩大]
+    subgraph "AI 调用层"
+        A1[消息格式化]
+        A2[模型选择]
+        A3[HTTP API 调用]
+        A4[响应解析]
+        A5[结果验证]
     end
     
-    A1 -.->|解决| B2
-    A2 -.->|解决| B1
-    A3 -.->|解决| B3
+    subgraph "操作执行层"
+        E1[坐标解析]
+        E2[操作规划]
+        E3[设备控制]
+        E4[结果验证]
+        E5[报告生成]
+    end
     
-    B1 --> C1
-    B2 --> C2
-    B3 --> C3
+    S1 --> S2 --> S3 --> S4 --> S5 --> S6
+    S6 --> D1 --> D2 --> D3 --> D4 --> D5
+    D5 --> A1 --> A2 --> A3 --> A4 --> A5
+    A5 --> E1 --> E2 --> E3 --> E4 --> E5
     
-    style C1 fill:#c8e6c9
-    style C2 fill:#c8e6c9
-    style C3 fill:#c8e6c9
+    style S4 fill:#e1f5fe
+    style A3 fill:#fff3e0
+    style E3 fill:#f3e5f5
 ```
 
-Midscene.js 代表了UI自动化测试的一个重要发展方向，通过AI和视觉技术的结合，为自动化测试带来了新的可能性。其在Android平台上的实现充分展现了这种新范式的优势和潜力。
+## 🏢 开发工具链架构
 
----
+### 构建和开发环境
 
-*本文档基于 Midscene.js v0.30.6 源码分析编写*
+```mermaid
+graph TB
+    subgraph "开发工具"
+        T1[TypeScript]
+        T2[Rslib 构建工具]
+        T3[Biome 代码格式化]
+        T4[Vitest 测试框架]
+        T5[NX Monorepo 管理]
+        T6[PNPM 包管理]
+    end
+    
+    subgraph "CI/CD"
+        C1[GitHub Actions]
+        C2[自动化测试]
+        C3[包发布]
+        C4[文档生成]
+    end
+    
+    subgraph "质量控制"
+        Q1[ESLint 代码检查]
+        Q2[CommitLint 提交规范]
+        Q3[TypeScript 类型检查]
+        Q4[单元测试覆盖率]
+        Q5[集成测试]
+    end
+    
+    subgraph "发布流程"
+        P1[NPM Registry]
+        P2[版本管理]
+        P3[Release Notes]
+        P4[文档站点部署]
+    end
+    
+    T1 --> T2
+    T2 --> C2
+    T3 --> Q1
+    T4 --> Q4
+    T5 --> T6
+    T6 --> C3
+    
+    C1 --> C2
+    C2 --> C3
+    C3 --> C4
+    
+    Q1 --> Q3
+    Q3 --> Q4
+    Q4 --> Q5
+    
+    C3 --> P1
+    P1 --> P2
+    P2 --> P3
+    C4 --> P4
+    
+    style T2 fill:#e1f5fe
+    style C1 fill:#fff3e0
+```
+
+## 🌐 生态系统架构
+
+### 外部集成和扩展
+
+```mermaid
+graph TB
+    subgraph "Midscene 核心"
+        MC[Midscene Core]
+    end
+    
+    subgraph "官方扩展"
+        E1[Chrome Extension]
+        E2[Playground UI]
+        E3[MCP Protocol]
+        E4[CLI Tools]
+    end
+    
+    subgraph "社区扩展"
+        CE1[midscene-ios<br/>社区iOS支持]
+        CE2[Midscene-Python<br/>Python SDK]  
+        CE3[midscene-java<br/>Java SDK]
+        CE4[其他语言绑定]
+    end
+    
+    subgraph "外部工具集成"
+        I1[Jest/Vitest]
+        I2[Cypress]
+        I3[Selenium]
+        I4[CI/CD 系统]
+        I5[IDE 插件]
+    end
+    
+    subgraph "AI 服务生态"
+        AI1[OpenAI]
+        AI2[Anthropic]
+        AI3[开源模型]
+        AI4[企业私有模型]
+    end
+    
+    subgraph "用户应用场景"
+        U1[Web 自动化测试]
+        U2[移动端测试]
+        U3[RPA 业务流程]
+        U4[AI 助手工具]
+        U5[回归测试]
+    end
+    
+    MC --> E1
+    MC --> E2
+    MC --> E3
+    MC --> E4
+    
+    MC --> CE1
+    MC --> CE2
+    MC --> CE3
+    MC --> CE4
+    
+    MC --> I1
+    MC --> I2
+    MC --> I3
+    MC --> I4
+    MC --> I5
+    
+    MC --> AI1
+    MC --> AI2
+    MC --> AI3
+    MC --> AI4
+    
+    MC --> U1
+    MC --> U2
+    MC --> U3
+    MC --> U4
+    MC --> U5
+    
+    style MC fill:#e1f5fe
+    style AI1 fill:#fff3e0
+    style U1 fill:#f3e5f5
+```
+
+## 📊 技术栈总结
+
+### 核心技术选型
+
+| 层次 | 技术栈 | 说明 |
+|------|--------|------|
+| **语言** | TypeScript | 全栈类型安全 |
+| **构建** | Rslib | 现代化构建工具 |
+| **包管理** | PNPM + Monorepo | 高效依赖管理 |
+| **测试** | Vitest | 快速单元测试 |
+| **AI 调用** | OpenAI SDK, Anthropic SDK | 多模型支持 |
+| **设备控制** | ADB, WebDriver, Puppeteer | 跨平台设备操作 |
+| **服务端** | Express, Socket.IO | 轻量级服务支持 |
+| **协议** | MCP, HTTP, WebSocket | 标准协议集成 |
+
+### 关键设计模式
+
+| 模式 | 应用场景 | 实现位置 |
+|------|---------|---------|
+| **抽象工厂** | 多平台 Agent 创建 | `Agent<T>` |
+| **策略模式** | 不同 AI 模型适配 | `callAI()` |
+| **观察者模式** | 任务执行监听 | `TaskExecutor` |
+| **适配器模式** | 设备控制统一 | `AbstractInterface` |
+| **建造者模式** | UIContext 构建 | `commonContextParser` |
+| **单例模式** | 配置管理 | `ModelConfigManager` |
+
+## 🎯 架构优势总结
+
+### 核心优势
+
+1. **📱 跨平台统一**: 一套 API 适配 Web/Android/iOS
+2. **🤖 AI 原生**: 深度集成多种视觉语言模型
+3. **🔧 模块化**: 清晰的分层和组件化设计
+4. **⚡ 高性能**: 多层缓存和优化策略
+5. **🛠️ 可扩展**: 插件化架构支持自定义扩展
+6. **🎨 开发友好**: 完整的工具链和调试支持
+
+### 技术创新点
+
+- **视觉优先**: 摆脱传统 DOM/控件树依赖
+- **自然语言**: 用户友好的操作描述方式  
+- **智能缓存**: 多层缓存提升执行效率
+- **实时调试**: 可视化 Playground 调试环境
+- **标准协议**: MCP 协议支持 AI 助手集成
+
+这个架构展现了 **Midscene.js 作为下一代 AI 驱动自动化测试框架的完整技术蓝图**，从底层设备控制到上层 AI 集成，形成了一个功能完整、技术先进的自动化测试生态系统。
