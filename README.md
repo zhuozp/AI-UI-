@@ -109,126 +109,268 @@ graph TD
 
 ### 2.1 Overall Design
 
-#### 2.1.1 系统总体架构 (双模式AI自动化测试架构)
+#### 2.1.1 系统总体架构 (层级化双模式AI自动化测试架构)
 
 ```mermaid
 graph TB
-    subgraph "开发阶段 - Development Phase"
-        subgraph "Cursor IDE环境"
-            A1[Cursor IDE<br/>🎯 开发者交互界面]
-            A2[MCP Plugin<br/>🔌 MCP协议插件]
-            A3[模型配置器<br/>⚙️ 在Cursor中选择AI模型]
+    %% ===== 第1层：用户交互层 =====
+    subgraph "Layer 1: 用户交互层 - User Interface Layer"
+        subgraph "开发模式入口"
+            UI1[Cursor IDE<br/>🎯 开发者交互界面<br/>集成MCP Plugin]
+            UI2[模型配置器<br/>⚙️ AI模型选择配置]
         end
-        
-        subgraph "Mobile-MCP Server"
-            B1[MCP协议处理器<br/>📡 处理Cursor请求]
-            B2[AI模型调度器<br/>🧠 根据Cursor配置调用AI]
-            B3[指令解析引擎<br/>📝 自然语言理解]
-            B4[设备操作协调器<br/>🎛️ 协调设备操作]
+        subgraph "回归模式入口"
+            UI3[CLI测试脚本<br/>📋 批量回归测试入口]
         end
     end
     
-    subgraph "回归阶段 - Regression Phase"
-        subgraph "扩展Midscene框架 - Extended Midscene Framework"
-            C1[UI树结构引擎<br/>🌳 集成Mobile-MCP的UI树解析]
-            C2[混合定位引擎<br/>🎯 结构化+视觉混合定位]
-            C3[多模态分析器<br/>👁️ 集成公司AI模型]
-            C4[自动化测试执行器<br/>🔄 批量回归测试]
-            C5[缓存优化器<br/>💾 智能缓存策略]
+    %% ===== 第2层：业务应用层 =====
+    subgraph "Layer 2: 业务应用层 - Business Application Layer"
+        subgraph "开发阶段业务逻辑"
+            APP1[Mobile-MCP Server<br/>📡 MCP协议处理器]
+            APP2[AI模型调度器<br/>🧠 智能模型选择]
+            APP3[指令解析引擎<br/>📝 自然语言理解]
         end
-        
-        subgraph "CLI测试入口"
-            CLI[CLI测试脚本<br/>📋 回归测试触发器]
+        subgraph "回归阶段业务逻辑"
+            APP4[扩展Midscene框架<br/>🚀 批量测试执行器]
+            APP5[UI树结构引擎<br/>🌳 Mobile-MCP UI树解析]
+            APP6[混合定位引擎<br/>🎯 结构化+视觉定位]
+            APP7[多模态分析器<br/>👁️ 融合AI分析]
         end
     end
     
-    subgraph "公司AI模型服务 - Company AI Model Services"
-        D1[公司Gemini-2.5-Pro<br/>👁️ 视觉理解模型]
-        D2[公司GPT-4.0<br/>💬 自然语言处理模型]
-        D3[模型适配器<br/>🔄 统一API接口]
+    %% ===== 第3层：AI服务层 =====
+    subgraph "Layer 3: AI服务层 - AI Service Layer"
+        AI1[公司Gemini-2.5-Pro<br/>👁️ 视觉理解模型]
+        AI2[公司GPT-4.0<br/>💬 自然语言处理]
+        AI3[模型适配器<br/>🔄 统一API接口]
     end
     
-    subgraph "统一设备操作层 - Unified Device Operation Layer"
-        E1[Android操作器<br/>🤖 ADB + UIAutomator]
-        E2[iOS操作器<br/>🍎 WebDriverAgent + XCTest]
-        E3[设备状态监控<br/>📊 实时设备状态]
-        E4[UI树提取器<br/>🌲 Mobile-MCP风格UI树]
+    %% ===== 第4层：设备操作层 =====
+    subgraph "Layer 4: 设备操作层 - Device Operation Layer"
+        DEV1[Android操作器<br/>🤖 ADB + UIAutomator]
+        DEV2[iOS操作器<br/>🍎 WebDriverAgent + XCTest]
+        DEV3[设备状态监控<br/>📊 实时状态管理]
+        DEV4[UI树提取器<br/>🌲 跨平台UI结构提取]
     end
     
-    subgraph "设备驱动层 - Device Driver Layer"
-        F1[ADB服务<br/>Android设备通信]
-        F2[WebDriverAgent<br/>iOS设备通信]
-        F3[Android设备/模拟器<br/>📱 实际测试设备]
-        F4[iOS设备/模拟器<br/>📱 实际测试设备]
+    %% ===== 第5层：设备驱动层 =====
+    subgraph "Layer 5: 设备驱动层 - Device Driver Layer"
+        DRV1[ADB服务<br/>Android设备通信]
+        DRV2[WebDriverAgent<br/>iOS设备通信]
     end
     
-    subgraph "本地存储 - Local Storage"
-        G1[测试结果存储<br/>📋 执行结果和截图]
-        G2[配置文件管理<br/>⚙️ 双模式配置]
-        G3[缓存文件系统<br/>💾 AI分析结果缓存]
+    %% ===== 第6层：设备硬件层 =====
+    subgraph "Layer 6: 设备硬件层 - Device Hardware Layer"
+        HW1[Android设备/模拟器<br/>📱 Android测试设备]
+        HW2[iOS设备/模拟器<br/>📱 iOS测试设备]
     end
     
-    %% 开发阶段连接 (Development Phase Connections)
-    A1 --> A2
-    A2 --> B1
-    A3 --> B2
-    B1 --> B3
-    B2 --> B4
-    B3 --> B4
+    %% ===== 第7层：数据存储层 =====
+    subgraph "Layer 7: 数据存储层 - Data Storage Layer"
+        STORE1[测试结果存储<br/>📋 执行结果和截图]
+        STORE2[配置文件管理<br/>⚙️ 系统配置]
+        STORE3[缓存文件系统<br/>💾 AI分析结果缓存]
+    end
     
-    %% 回归阶段连接 (Regression Phase Connections)  
-    CLI --> C4
-    C4 --> C1
-    C1 --> C2
-    C2 --> C3
-    C3 --> C5
+    %% ===== 层间连接关系 =====
     
-    %% AI模型调用 (AI Model Calls)
-    %% 开发阶段：Cursor控制模型选择
-    B2 --> D3
-    %% 回归阶段：扩展Midscene框架调用公司AI模型
-    C3 --> D1
-    C3 --> D2
+    %% Layer 1 → Layer 2 (用户交互层 → 业务应用层)
+    UI1 --> APP1
+    UI1 --> APP2
+    UI2 --> APP2
+    UI3 --> APP4
     
-    D3 --> D1
-    D3 --> D2
+    %% Layer 2内部连接
+    APP1 --> APP3
+    APP2 --> APP3
+    APP4 --> APP5
+    APP4 --> APP6
+    APP5 --> APP6
+    APP6 --> APP7
     
-    %% 统一设备操作 (Unified Device Operations)
-    B4 --> E1
-    B4 --> E2
-    B4 --> E3
-    C2 --> E1
-    C2 --> E2
-    C2 --> E4
+    %% Layer 2 → Layer 3 (业务应用层 → AI服务层)
+    APP2 --> AI3
+    APP7 --> AI1
+    APP7 --> AI2
+    AI3 --> AI1
+    AI3 --> AI2
     
-    %% 设备驱动连接 (Device Driver Connections)
-    E1 --> F1
-    E2 --> F2
-    E3 --> F1
-    E3 --> F2
-    E4 --> F1
-    E4 --> F2
-    F1 --> F3
-    F2 --> F4
+    %% Layer 2 → Layer 4 (业务应用层 → 设备操作层)
+    APP3 --> DEV1
+    APP3 --> DEV2
+    APP3 --> DEV3
+    APP6 --> DEV1
+    APP6 --> DEV2
+    APP6 --> DEV4
     
-    %% 本地存储连接 (Local Storage Connections)
-    B4 --> G1
-    C5 --> G3
-    A3 --> G2
-    C4 --> G2
+    %% Layer 4 → Layer 5 (设备操作层 → 设备驱动层)
+    DEV1 --> DRV1
+    DEV2 --> DRV2
+    DEV3 --> DRV1
+    DEV3 --> DRV2
+    DEV4 --> DRV1
+    DEV4 --> DRV2
     
-    %% 样式定义
-    style A1 fill:#e1f5fe
-    style B1 fill:#e8f5e8
-    style C1 fill:#fff3e0
-    style CLI fill:#ffebee
-    style D1 fill:#FFA500
-    style D2 fill:#32CD32
-    style E1 fill:#90EE90
-    style E2 fill:#FFB6C1
-    style F1 fill:#DDA0DD
-    style F2 fill:#F0E68C
+    %% Layer 5 → Layer 6 (设备驱动层 → 设备硬件层)
+    DRV1 --> HW1
+    DRV2 --> HW2
+    
+    %% Layer 2,4 → Layer 7 (业务应用层、设备操作层 → 数据存储层)
+    APP3 --> STORE1
+    APP7 --> STORE3
+    UI2 --> STORE2
+    APP4 --> STORE2
+    DEV3 --> STORE1
+    
+    %% ===== 层级样式定义 =====
+    
+    %% Layer 1 - 用户交互层 (蓝色系)
+    style UI1 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style UI2 fill:#e8f5e8,stroke:#388e3c,stroke-width:2px  
+    style UI3 fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    
+    %% Layer 2 - 业务应用层 (绿色系)
+    style APP1 fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    style APP2 fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    style APP3 fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    style APP4 fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+    style APP5 fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+    style APP6 fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+    style APP7 fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+    
+    %% Layer 3 - AI服务层 (橙色系)
+    style AI1 fill:#fff3e0,stroke:#ff9800,stroke-width:2px
+    style AI2 fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    style AI3 fill:#fce4ec,stroke:#e91e63,stroke-width:2px
+    
+    %% Layer 4 - 设备操作层 (紫色系)
+    style DEV1 fill:#f3e5f5,stroke:#673ab7,stroke-width:2px
+    style DEV2 fill:#fce4ec,stroke:#e91e63,stroke-width:2px
+    style DEV3 fill:#e1f5fe,stroke:#03a9f4,stroke-width:2px
+    style DEV4 fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    
+    %% Layer 5 - 设备驱动层 (深色系)
+    style DRV1 fill:#ede7f6,stroke:#673ab7,stroke-width:2px
+    style DRV2 fill:#fff8e1,stroke:#ffc107,stroke-width:2px
+    
+    %% Layer 6 - 设备硬件层 (灰色系)
+    style HW1 fill:#f5f5f5,stroke:#616161,stroke-width:2px
+    style HW2 fill:#f5f5f5,stroke:#616161,stroke-width:2px
+    
+    %% Layer 7 - 数据存储层 (蓝灰色系)
+    style STORE1 fill:#eceff1,stroke:#607d8b,stroke-width:2px
+    style STORE2 fill:#eceff1,stroke:#607d8b,stroke-width:2px
+    style STORE3 fill:#eceff1,stroke:#607d8b,stroke-width:2px
 ```
+
+##### **🏗️ 层级化架构设计说明**
+
+**📊 架构层级职责分工**:
+
+| 层级 | 名称 | 核心职责 | 主要组件 | 颜色标识 |
+|------|------|----------|----------|----------|
+| **Layer 1** | 用户交互层 | 用户入口，模式选择 | Cursor IDE、CLI脚本、模型配置器 | 🔵 蓝色系 |
+| **Layer 2** | 业务应用层 | 核心业务逻辑处理 | Mobile-MCP Server、扩展Midscene框架 | 🟢 绿/紫色系 |
+| **Layer 3** | AI服务层 | AI模型调用和管理 | 公司Gemini-2.5-Pro、GPT-4.0、模型适配器 | 🟠 橙色系 |
+| **Layer 4** | 设备操作层 | 跨平台设备操作抽象 | Android/iOS操作器、状态监控、UI树提取 | 🟣 紫色系 |
+| **Layer 5** | 设备驱动层 | 底层设备驱动服务 | ADB服务、WebDriverAgent | 🟤 深色系 |
+| **Layer 6** | 设备硬件层 | 物理/虚拟设备 | Android/iOS设备、模拟器 | ⚫ 灰色系 |
+| **Layer 7** | 数据存储层 | 数据持久化和缓存 | 测试结果、配置文件、缓存系统 | 🔘 蓝灰色系 |
+
+**🎯 层级化设计优势**:
+
+1. **📋 职责清晰**: 每一层都有明确的职责边界，避免功能耦合
+2. **🔄 数据流向清晰**: 自顶向下的数据流，层间交互规范化
+3. **🔧 易于维护**: 层级独立，单层修改不影响其他层
+4. **📈 可扩展性强**: 可以在任何层级扩展功能，不破坏整体架构
+5. **🎨 视觉分明**: 不同颜色标识不同层级，一目了然
+
+**🌊 数据流向说明**:
+
+```mermaid
+graph LR
+    A[用户指令] --> B[业务处理] --> C[AI分析] --> D[设备操作] --> E[驱动执行] --> F[硬件响应] --> G[结果存储]
+    
+    style A fill:#e3f2fd
+    style B fill:#e8f5e8  
+    style C fill:#fff3e0
+    style D fill:#f3e5f5
+    style E fill:#ede7f6
+    style F fill:#f5f5f5
+    style G fill:#eceff1
+```
+
+**🔀 双模式流程对比**:
+
+| 执行阶段 | 开发模式流程 | 回归模式流程 |
+|---------|-------------|-------------|
+| **入口层** | Cursor IDE → 模型配置器 | CLI脚本 |
+| **业务层** | Mobile-MCP Server → AI调度器 → 指令解析 | 扩展Midscene → UI树引擎 → 混合定位 → 多模态分析 |
+| **AI层** | 根据Cursor配置动态选择模型 | 直接调用公司Gemini+GPT |
+| **操作层** | 实时设备操作 + 状态监控 | 批量设备操作 + UI树提取 |
+| **存储层** | 实时结果存储 | 批量结果存储 + 智能缓存 |
+
+**🏗️ 层级化架构核心特征**:
+
+### **垂直分层特征**:
+```
+Layer 1: 用户交互层    🔵 用户友好的交互界面
+    ↓
+Layer 2: 业务应用层    🟢 核心业务逻辑处理  
+    ↓
+Layer 3: AI服务层      🟠 智能分析和决策
+    ↓  
+Layer 4: 设备操作层    🟣 跨平台设备抽象
+    ↓
+Layer 5: 设备驱动层    🟤 底层驱动服务
+    ↓
+Layer 6: 设备硬件层    ⚫ 物理设备资源
+    ↓
+Layer 7: 数据存储层    🔘 持久化存储
+```
+
+### **水平分模式特征**:
+```
+开发模式 (左侧)                    回归模式 (右侧)
+Cursor IDE                    ←→   CLI脚本
+Mobile-MCP Server            ←→   扩展Midscene框架
+实时交互                     ←→   批量执行
+即时反馈                     ←→   智能缓存
+```
+
+### **层间交互原则**:
+
+1. **📤 单向依赖**: 上层依赖下层，下层不依赖上层
+2. **🔗 接口标准化**: 每层提供标准化接口，降低耦合
+3. **⚡ 异步通信**: 支持异步调用，提高系统响应性
+4. **🔄 错误传播**: 错误信息逐层向上传播，便于定位
+5. **💾 状态隔离**: 每层维护独立状态，避免状态污染
+
+### **架构优化亮点**:
+
+#### **🎯 相比原架构的改进**:
+
+| 改进项 | 原架构问题 | 优化后效果 |
+|-------|-----------|-----------|
+| **层级混乱** | 组件分布杂乱，关系复杂 | **7层清晰分层，职责明确** |
+| **数据流模糊** | 数据流向不清晰 | **自顶向下数据流，流向清楚** |
+| **耦合度高** | 组件间耦合严重 | **层间接口标准化，低耦合** |
+| **维护困难** | 修改影响面大 | **层级独立，局部修改** |
+| **视觉混乱** | 缺乏视觉层次 | **颜色编码，层次分明** |
+
+#### **🚀 架构扩展性**:
+
+**水平扩展能力**:
+- **Layer 1**: 可添加Web界面、API接口等新的用户入口
+- **Layer 2**: 可扩展新的测试框架或业务逻辑
+- **Layer 3**: 可集成更多AI模型服务 (如Claude、LLaMA等)
+- **Layer 4**: 可支持更多平台 (如Web、桌面应用)
+
+**垂直扩展能力**:
+- 可在任意层间插入新的中间层
+- 支持层内组件的水平扩展
+- 支持跨层的功能增强
 
 #### 2.1.2 双模式架构核心组件详细说明
 
