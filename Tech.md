@@ -109,140 +109,576 @@ graph TD
 
 ### 2.1 Overall Design
 
-#### 2.1.1 系统总体架构 (简化版 - 无后台服务)
+#### 2.1.1 系统总体架构 (层级化双模式AI自动化测试架构)
 
 ```mermaid
 graph TB
-    subgraph "用户接入层 - User Access Layer"
-        A1[Cursor IDE插件<br/>💻 开发时即时测试]
-        A3[CLI测试脚本<br/>🔄 本地全回归测试]
+    %% ===== 第1层：用户交互层 =====
+    subgraph "Layer 1: 用户交互层 - User Interface Layer"
+        subgraph "开发模式入口"
+            UI1[Cursor IDE<br/>🎯 开发者交互界面<br/>集成MCP Plugin]
+            UI2[模型配置器<br/>⚙️ AI模型选择配置]
+        end
+        subgraph "回归模式入口"
+            UI3[CLI测试脚本<br/>📋 批量回归测试入口]
+        end
     end
     
-    subgraph "AI决策核心层 - AI Decision Core Layer (本地)"
-        C1[自然语言处理引擎<br/>本地GPT-4.0调用]
-        C2[任务规划器<br/>本地执行计划]
-        C3[策略选择器<br/>本地策略选择]
-        C4[执行协调器<br/>本地组件协调]
-        C5[结果验证器<br/>本地结果验证]
+    %% ===== 第2层：业务应用层 =====
+    subgraph "Layer 2: 业务应用层 - Business Application Layer"
+        subgraph "开发阶段业务逻辑"
+            APP1[Mobile-MCP Server<br/>📡 MCP协议处理器]
+            APP2[AI模型调度器<br/>🧠 智能模型选择]
+            APP3[指令解析引擎<br/>📝 自然语言理解]
+        end
+        subgraph "回归阶段业务逻辑"
+            APP4[扩展Midscene框架<br/>🚀 批量测试执行器]
+            APP5[UI树结构引擎<br/>🌳 Mobile-MCP UI树解析]
+            APP6[混合定位引擎<br/>🎯 结构化+视觉定位]
+            APP7[多模态分析器<br/>👁️ 融合AI分析]
+        end
     end
     
-    subgraph "多模态理解层 - Multimodal Understanding Layer (本地)"
-        D1[视觉分析服务<br/>本地Gemini-2.5-Pro调用]
-        D2[结构化数据解析器<br/>本地UI树解析]
-        D3[元素定位引擎<br/>本地混合定位]
-        D4[上下文融合器<br/>本地数据融合]
-        D5[置信度评估器<br/>本地置信度评估]
+    %% ===== 第3层：AI服务层 =====
+    subgraph "Layer 3: AI服务层 - AI Service Layer"
+        AI1[公司Gemini-2.5-Pro<br/>👁️ 视觉理解模型]
+        AI2[公司GPT-4.0<br/>💬 自然语言处理]
+        AI3[模型适配器<br/>🔄 统一API接口]
     end
     
-    subgraph "设备操作层 - Device Operation Layer (本地)"
-        E1[Android操作适配器<br/>🤖 直接ADB调用]
-        E2[iOS操作适配器<br/>🍎 直接WebDriverAgent调用]
-        E3[设备连接管理器<br/>本地设备管理]
-        E4[操作执行器<br/>本地操作执行]
+    %% ===== 第4层：设备操作层 =====
+    subgraph "Layer 4: 设备操作层 - Device Operation Layer"
+        DEV1[Android操作器<br/>🤖 ADB + UIAutomator]
+        DEV2[iOS操作器<br/>🍎 WebDriverAgent + XCTest]
+        DEV3[设备状态监控<br/>📊 实时状态管理]
+        DEV4[UI树提取器<br/>🌲 跨平台UI结构提取]
     end
     
-    subgraph "本地框架层 - Local Framework Layer"
-        F1[Mobile-MCP客户端<br/>本地MCP客户端]
-        F2[Midscene框架<br/>本地测试框架]
-        F3[本地配置管理<br/>配置文件管理]
-        F4[本地缓存<br/>文件缓存]
+    %% ===== 第5层：设备驱动层 =====
+    subgraph "Layer 5: 设备驱动层 - Device Driver Layer"
+        DRV1[ADB服务<br/>Android设备通信]
+        DRV2[WebDriverAgent<br/>iOS设备通信]
     end
     
-    subgraph "设备驱动层 - Device Driver Layer"
-        G1[ADB服务<br/>Android设备通信]
-        G2[WebDriverAgent<br/>iOS设备通信]
-        G3[Android模拟器<br/>Emulator]
-        G4[iOS模拟器<br/>Simulator]
-        G5[真机设备<br/>Physical Devices]
+    %% ===== 第6层：设备硬件层 =====
+    subgraph "Layer 6: 设备硬件层 - Device Hardware Layer"
+        HW1[Android设备/模拟器<br/>📱 Android测试设备]
+        HW2[iOS设备/模拟器<br/>📱 iOS测试设备]
     end
     
-    subgraph "外部API服务 - External API Services"
-        H1[Gemini-2.5-Pro API<br/>视觉理解模型]
-        H2[GPT-4.0 API<br/>自然语言处理]
+    %% ===== 第7层：数据存储层 =====
+    subgraph "Layer 7: 数据存储层 - Data Storage Layer"
+        STORE1[测试结果存储<br/>📋 执行结果和截图]
+        STORE2[配置文件管理<br/>⚙️ 系统配置]
+        STORE3[缓存文件系统<br/>💾 AI分析结果缓存]
     end
     
-    subgraph "本地存储 - Local Storage"
-        I1[本地文件存储<br/>测试结果/截图]
-        I2[配置文件<br/>YAML/JSON配置]
-        I3[临时缓存<br/>执行过程缓存]
-    end
+    %% ===== 层间连接关系 =====
     
-    %% 直接连接，去掉中间层
-    A1 --> F1
-    A3 --> F2
+    %% Layer 1 → Layer 2 (用户交互层 → 业务应用层)
+    UI1 --> APP1
+    UI1 --> APP2
+    UI2 --> APP2
+    UI3 --> APP4
     
-    F1 --> C1
-    F2 --> C2
+    %% Layer 2内部连接
+    APP1 --> APP3
+    APP2 --> APP3
+    APP4 --> APP5
+    APP4 --> APP6
+    APP5 --> APP6
+    APP6 --> APP7
     
-    C1 --> D1
-    C2 --> D2
-    C3 --> D3
-    C4 --> D4
-    C5 --> D5
+    %% Layer 2 → Layer 3 (业务应用层 → AI服务层)
+    APP2 --> AI3
+    APP7 --> AI1
+    APP7 --> AI2
+    AI3 --> AI1
+    AI3 --> AI2
     
-    D1 --> E1
-    D2 --> E2
-    D3 --> E3
-    D4 --> E4
+    %% Layer 2 → Layer 4 (业务应用层 → 设备操作层)
+    APP3 --> DEV1
+    APP3 --> DEV2
+    APP3 --> DEV3
+    APP6 --> DEV1
+    APP6 --> DEV2
+    APP6 --> DEV4
     
-    E1 --> G1
-    E2 --> G2
-    E3 --> G3
-    E3 --> G4
-    E3 --> G5
+    %% Layer 4 → Layer 5 (设备操作层 → 设备驱动层)
+    DEV1 --> DRV1
+    DEV2 --> DRV2
+    DEV3 --> DRV1
+    DEV3 --> DRV2
+    DEV4 --> DRV1
+    DEV4 --> DRV2
     
-    %% 外部API调用
-    C1 --> H2
-    D1 --> H1
+    %% Layer 5 → Layer 6 (设备驱动层 → 设备硬件层)
+    DRV1 --> HW1
+    DRV2 --> HW2
     
-    %% 本地存储
-    C4 --> I1
-    D4 --> I3
-    F3 --> I2
+    %% Layer 2,4 → Layer 7 (业务应用层、设备操作层 → 数据存储层)
+    APP3 --> STORE1
+    APP7 --> STORE3
+    UI2 --> STORE2
+    APP4 --> STORE2
+    DEV3 --> STORE1
     
-    style A1 fill:#e1f5fe
-    style A3 fill:#fff3e0
-    style C1 fill:#e8f5e8
-    style E1 fill:#90EE90
-    style E2 fill:#FFB6C1
-    style G1 fill:#DDA0DD
-    style G2 fill:#F0E68C
-    style H1 fill:#FFA500
-    style H2 fill:#32CD32
+    %% ===== 层级样式定义 =====
+    
+    %% Layer 1 - 用户交互层 (蓝色系)
+    style UI1 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style UI2 fill:#e8f5e8,stroke:#388e3c,stroke-width:2px  
+    style UI3 fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    
+    %% Layer 2 - 业务应用层 (绿色系)
+    style APP1 fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    style APP2 fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    style APP3 fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    style APP4 fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+    style APP5 fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+    style APP6 fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+    style APP7 fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+    
+    %% Layer 3 - AI服务层 (橙色系)
+    style AI1 fill:#fff3e0,stroke:#ff9800,stroke-width:2px
+    style AI2 fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    style AI3 fill:#fce4ec,stroke:#e91e63,stroke-width:2px
+    
+    %% Layer 4 - 设备操作层 (紫色系)
+    style DEV1 fill:#f3e5f5,stroke:#673ab7,stroke-width:2px
+    style DEV2 fill:#fce4ec,stroke:#e91e63,stroke-width:2px
+    style DEV3 fill:#e1f5fe,stroke:#03a9f4,stroke-width:2px
+    style DEV4 fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    
+    %% Layer 5 - 设备驱动层 (深色系)
+    style DRV1 fill:#ede7f6,stroke:#673ab7,stroke-width:2px
+    style DRV2 fill:#fff8e1,stroke:#ffc107,stroke-width:2px
+    
+    %% Layer 6 - 设备硬件层 (灰色系)
+    style HW1 fill:#f5f5f5,stroke:#616161,stroke-width:2px
+    style HW2 fill:#f5f5f5,stroke:#616161,stroke-width:2px
+    
+    %% Layer 7 - 数据存储层 (蓝灰色系)
+    style STORE1 fill:#eceff1,stroke:#607d8b,stroke-width:2px
+    style STORE2 fill:#eceff1,stroke:#607d8b,stroke-width:2px
+    style STORE3 fill:#eceff1,stroke:#607d8b,stroke-width:2px
 ```
 
-#### 2.1.2 核心组件详细说明 (简化本地架构)
+##### **🏗️ 层级化架构设计说明**
 
-**🎯 架构简化说明**:
-- **去掉后台服务**: 无需Web服务、数据库、API服务器等后台组件
-- **本地执行**: 所有组件都在本地运行，直接调用外部AI API
-- **轻量化部署**: 只需安装必要的本地工具和依赖
+**📊 架构层级职责分工**:
 
-##### **用户接入层组件说明**
+| 层级 | 名称 | 核心职责 | 主要组件 | 颜色标识 |
+|------|------|----------|----------|----------|
+| **Layer 1** | 用户交互层 | 用户入口，模式选择 | Cursor IDE、CLI脚本、模型配置器 | 🔵 蓝色系 |
+| **Layer 2** | 业务应用层 | 核心业务逻辑处理 | Mobile-MCP Server、扩展Midscene框架 | 🟢 绿/紫色系 |
+| **Layer 3** | AI服务层 | AI模型调用和管理 | 公司Gemini-2.5-Pro、GPT-4.0、模型适配器 | 🟠 橙色系 |
+| **Layer 4** | 设备操作层 | 跨平台设备操作抽象 | Android/iOS操作器、状态监控、UI树提取 | 🟣 紫色系 |
+| **Layer 5** | 设备驱动层 | 底层设备驱动服务 | ADB服务、WebDriverAgent | 🟤 深色系 |
+| **Layer 6** | 设备硬件层 | 物理/虚拟设备 | Android/iOS设备、模拟器 | ⚫ 灰色系 |
+| **Layer 7** | 数据存储层 | 数据持久化和缓存 | 测试结果、配置文件、缓存系统 | 🔘 蓝灰色系 |
 
-**💻 Cursor IDE插件 - 开发时即时测试**
-- **运行方式**: 通过MCP协议直接调用本地AI+设备操作能力
-- **使用场景**: 开发过程中的快速验证和调试
+**🎯 层级化设计优势**:
+
+1. **📋 职责清晰**: 每一层都有明确的职责边界，避免功能耦合
+2. **🔄 数据流向清晰**: 自顶向下的数据流，层间交互规范化
+3. **🔧 易于维护**: 层级独立，单层修改不影响其他层
+4. **📈 可扩展性强**: 可以在任何层级扩展功能，不破坏整体架构
+5. **🎨 视觉分明**: 不同颜色标识不同层级，一目了然
+
+**🌊 数据流向说明**:
+
+```mermaid
+graph LR
+    A[用户指令] --> B[业务处理] --> C[AI分析] --> D[设备操作] --> E[驱动执行] --> F[硬件响应] --> G[结果存储]
+    
+    style A fill:#e3f2fd
+    style B fill:#e8f5e8  
+    style C fill:#fff3e0
+    style D fill:#f3e5f5
+    style E fill:#ede7f6
+    style F fill:#f5f5f5
+    style G fill:#eceff1
+```
+
+**🔀 双模式流程对比**:
+
+| 执行阶段 | 开发模式流程 | 回归模式流程 |
+|---------|-------------|-------------|
+| **入口层** | Cursor IDE → 模型配置器 | CLI脚本 |
+| **业务层** | Mobile-MCP Server → AI调度器 → 指令解析 | 扩展Midscene → UI树引擎 → 混合定位 → 多模态分析 |
+| **AI层** | 根据Cursor配置动态选择模型 | 直接调用公司Gemini+GPT |
+| **操作层** | 实时设备操作 + 状态监控 | 批量设备操作 + UI树提取 |
+| **存储层** | 实时结果存储 | 批量结果存储 + 智能缓存 |
+
+**🏗️ 层级化架构核心特征**:
+
+### **垂直分层特征**:
+```
+Layer 1: 用户交互层    🔵 用户友好的交互界面
+    ↓
+Layer 2: 业务应用层    🟢 核心业务逻辑处理  
+    ↓
+Layer 3: AI服务层      🟠 智能分析和决策
+    ↓  
+Layer 4: 设备操作层    🟣 跨平台设备抽象
+    ↓
+Layer 5: 设备驱动层    🟤 底层驱动服务
+    ↓
+Layer 6: 设备硬件层    ⚫ 物理设备资源
+    ↓
+Layer 7: 数据存储层    🔘 持久化存储
+```
+
+### **水平分模式特征**:
+```
+开发模式 (左侧)                    回归模式 (右侧)
+Cursor IDE                    ←→   CLI脚本
+Mobile-MCP Server            ←→   扩展Midscene框架
+实时交互                     ←→   批量执行
+即时反馈                     ←→   智能缓存
+```
+
+### **层间交互原则**:
+
+1. **📤 单向依赖**: 上层依赖下层，下层不依赖上层
+2. **🔗 接口标准化**: 每层提供标准化接口，降低耦合
+3. **⚡ 异步通信**: 支持异步调用，提高系统响应性
+4. **🔄 错误传播**: 错误信息逐层向上传播，便于定位
+5. **💾 状态隔离**: 每层维护独立状态，避免状态污染
+
+### **架构优化亮点**:
+
+#### **🎯 相比原架构的改进**:
+
+| 改进项 | 原架构问题 | 优化后效果 |
+|-------|-----------|-----------|
+| **层级混乱** | 组件分布杂乱，关系复杂 | **7层清晰分层，职责明确** |
+| **数据流模糊** | 数据流向不清晰 | **自顶向下数据流，流向清楚** |
+| **耦合度高** | 组件间耦合严重 | **层间接口标准化，低耦合** |
+| **维护困难** | 修改影响面大 | **层级独立，局部修改** |
+| **视觉混乱** | 缺乏视觉层次 | **颜色编码，层次分明** |
+
+#### **🚀 架构扩展性**:
+
+**水平扩展能力**:
+- **Layer 1**: 可添加Web界面、API接口等新的用户入口
+- **Layer 2**: 可扩展新的测试框架或业务逻辑
+- **Layer 3**: 可集成更多AI模型服务 (如Claude、LLaMA等)
+- **Layer 4**: 可支持更多平台 (如Web、桌面应用)
+
+**垂直扩展能力**:
+- 可在任意层间插入新的中间层
+- 支持层内组件的水平扩展
+- 支持跨层的功能增强
+
+#### 2.1.2 双模式架构核心组件详细说明
+
+**🎯 双模式架构核心理念**:
+- **开发阶段**: Mobile-MCP Server + Cursor，灵活交互，即时反馈
+- **回归阶段**: 扩展Midscene框架，自动化批量执行，集成公司AI模型
+- **统一底层**: 两个阶段共享设备操作层和AI模型服务
+- **无后台服务**: 保持轻量化，无需复杂的基础设施部署
+
+---
+
+### **🔧 开发阶段组件详细说明 (Mobile-MCP Server + Cursor)**
+
+##### **Cursor IDE环境**
+
+**🎯 Cursor IDE - 开发者交互界面**
+- **核心功能**: 开发者主要工作环境，支持自然语言测试指令
+- **使用场景**: 开发过程中的即时测试、问题调试、功能验证
 - **技术实现**:
   ```typescript
-  // Cursor中直接调用
-  // 用户: "点击登录按钮并输入用户名test@example.com"
-  // MCP会直接调用本地AI处理 + 设备操作
+  // Cursor中的典型交互
+  // 开发者输入: "打开登录页面，输入test@example.com和password123，然后点击登录"
+  // 通过MCP Plugin实时发送到Mobile-MCP Server处理
   ```
 
-**🔄 CLI测试脚本 - 本地全回归测试**
-- **运行方式**: 本地命令行工具，直接执行测试
-- **使用场景**: 全回归测试、CI/CD集成、定时任务
+**🔌 MCP Plugin - MCP协议插件**
+- **核心功能**: 连接Cursor和Mobile-MCP Server的桥梁
+- **技术特点**: 
+  - 实时双向通信
+  - 支持流式结果返回
+  - 自动重连和错误恢复
+- **配置示例**:
+  ```json
+  {
+    "mcp_server": {
+      "url": "ws://localhost:3000/mcp",
+      "timeout": 30000,
+      "retry_policy": {
+        "max_attempts": 3,
+        "backoff_ms": 1000
+      }
+    }
+  }
+  ```
+
+**⚙️ 模型配置器 - 在Cursor中选择AI模型**
+- **核心功能**: **开发者在Cursor中灵活控制使用哪个AI模型**
+- **配置策略**: 
+  - 任务类型驱动：视觉任务 → Gemini-2.5-Pro，文本任务 → GPT-4.0
+  - 成本优化：根据复杂度选择合适模型
+  - 实验模式：支持A/B测试不同模型效果
+- **Cursor配置界面**:
+  ```yaml
+  # 在Cursor的设置中配置
+  ai_automation:
+    default_visual_model: "company-gemini-2.5-pro"
+    default_text_model: "company-gpt-4.0"
+    task_routing:
+      screenshot_analysis: "gemini-2.5-pro"
+      instruction_parsing: "gpt-4.0"
+      element_location: "hybrid"  # 使用两个模型结果融合
+    cost_optimization: true
+    experimental_mode: false
+  ```
+
+##### **Mobile-MCP Server**
+
+**📡 MCP协议处理器 - 处理Cursor请求**
+- **核心功能**: 接收、解析和分发来自Cursor的MCP请求
+- **处理流程**: MCP请求验证 → 指令解析 → 任务分解 → 执行调度
 - **技术实现**:
-  ```bash
-  # 本地全回归测试
-  ./ai-ui-test run --config=config.yaml --suite=regression
+  ```typescript
+  export class MCPProtocolHandler {
+    async handleTestRequest(request: MCPTestRequest): Promise<MCPResponse> {
+      // 1. 验证MCP协议格式
+      this.validateMCPRequest(request);
+      
+      // 2. 提取测试指令
+      const instruction = request.params.instruction;
+      const context = request.params.context;
+      
+      // 3. 调度到AI模型处理
+      const aiResult = await this.aiScheduler.processInstruction(
+        instruction, 
+        context,
+        request.modelPreferences // Cursor传递的模型偏好
+      );
+      
+      // 4. 执行设备操作
+      const deviceResult = await this.deviceCoordinator.executeActions(aiResult.actions);
+      
+      return this.formatMCPResponse(deviceResult);
+    }
+  }
+  ```
+
+**🧠 AI模型调度器 - 根据Cursor配置调用AI**
+- **核心功能**: **根据Cursor传递的模型配置，智能调度AI模型**
+- **调度逻辑**:
+  ```typescript
+  export class AIModelScheduler {
+    async processInstruction(
+      instruction: string, 
+      context: TestContext,
+      modelPreferences: ModelPreferences  // 来自Cursor的配置
+    ): Promise<AIProcessResult> {
+      
+      // 1. 分析任务类型
+      const taskType = await this.analyzeTaskType(instruction);
+      
+      // 2. 根据Cursor偏好选择模型
+      let selectedModel: AIModel;
+      if (taskType.requiresVision) {
+        selectedModel = modelPreferences.visualModel || this.defaultGeminiModel;
+      } else if (taskType.requiresNLP) {
+        selectedModel = modelPreferences.textModel || this.defaultGPTModel;
+      } else {
+        // 混合任务，可能需要多个模型协作
+        return await this.hybridProcessing(instruction, context, modelPreferences);
+      }
+      
+      // 3. 调用选定的模型
+      return await this.callAIModel(selectedModel, instruction, context);
+    }
+  }
+  ```
+
+---
+
+### **🚀 回归阶段组件详细说明 (扩展Midscene框架)**
+
+##### **扩展Midscene框架核心组件**
+
+**🌳 UI树结构引擎 - 集成Mobile-MCP的UI树解析**
+- **改造重点**: **将Mobile-MCP项目的UI树结构集成到Midscene框架中**
+- **核心改进**: 
+  - 统一Android/iOS的UI树格式
+  - 增加语义化元素描述
+  - 支持动态UI树缓存
+- **技术实现**:
+  ```typescript
+  // 扩展后的UI树结构（融合Mobile-MCP设计）
+  export interface ExtendedUITree {
+    // Mobile-MCP风格的基础结构
+    platform: 'android' | 'ios';
+    timestamp: number;
+    screen_bounds: Rectangle;
+    orientation: 'portrait' | 'landscape';
+    
+    // 扩展的语义化信息
+    semantic_context: {
+      screen_type?: 'login' | 'home' | 'list' | 'form' | 'dialog';
+      primary_actions?: string[];
+      key_elements?: string[];
+    };
+    
+    // 根节点
+    root: ExtendedUINode;
+  }
   
-  # 指定设备测试
-  ./ai-ui-test run --device=android --test-case=login_flow
+  export interface ExtendedUINode {
+    // Mobile-MCP兼容属性
+    id?: string;
+    className: string;
+    text?: string;
+    contentDescription?: string;
+    bounds: Rectangle;
+    visible: boolean;
+    enabled: boolean;
+    clickable: boolean;
+    focusable: boolean;
+    
+    // Midscene视觉扩展属性
+    visual_signature?: string;      // 视觉特征签名
+    ai_confidence?: number;         // AI识别置信度
+    semantic_labels?: string[];     // 语义标签
+    
+    // 子节点
+    children: ExtendedUINode[];
+  }
   
-  # 并行测试
-  ./ai-ui-test run --parallel --devices=all --output=./results/
+  export class UITreeEngine {
+    async extractUITree(deviceId: string, platform: 'android' | 'ios'): Promise<ExtendedUITree> {
+      // 1. 获取原始UI数据
+      const rawUIData = platform === 'android' 
+        ? await this.getAndroidUIAutomatorDump(deviceId)
+        : await this.getIOSXCTestDump(deviceId);
+      
+      // 2. 转换为Mobile-MCP风格的统一格式
+      const unifiedTree = await this.convertToUnifiedFormat(rawUIData, platform);
+      
+      // 3. 增加语义化信息
+      const enhancedTree = await this.addSemanticContext(unifiedTree);
+      
+      return enhancedTree;
+    }
+  }
+  ```
+
+**🎯 混合定位引擎 - 结构化+视觉混合定位**
+- **改造重点**: 结合Mobile-MCP的结构化定位优势和Midscene的视觉定位能力
+- **定位策略**:
+  1. **优先结构化定位** - 使用UI树中的准确信息
+  2. **视觉定位补强** - 当结构化信息不足时，使用AI视觉理解
+  3. **置信度融合** - 综合两种方式的置信度，选择最佳结果
+- **技术实现**:
+  ```typescript
+  export class HybridLocationEngine {
+    async locateElement(
+      instruction: string, 
+      uiTree: ExtendedUITree, 
+      screenshot: Buffer
+    ): Promise<ElementLocation> {
+      
+      // 1. 尝试结构化定位 (Mobile-MCP风格)
+      const structuralResults = await this.structuralLocate(instruction, uiTree);
+      
+      // 2. 尝试视觉定位 (Midscene风格)
+      const visualResults = await this.visualLocate(instruction, screenshot);
+      
+      // 3. 混合决策
+      return this.hybridDecision(structuralResults, visualResults, {
+        structural_weight: 0.7,  // 结构化定位权重更高
+        visual_weight: 0.3,      // 视觉定位作为补充
+        confidence_threshold: 0.8 // 置信度阈值
+      });
+    }
+    
+    private async structuralLocate(instruction: string, uiTree: ExtendedUITree): Promise<StructuralLocationResult[]> {
+      // 基于UI树的结构化定位逻辑
+      // 使用文本匹配、ID匹配、类名匹配等
+      return this.findElementsByStructure(instruction, uiTree);
+    }
+    
+    private async visualLocate(instruction: string, screenshot: Buffer): Promise<VisualLocationResult[]> {
+      // 基于AI视觉的定位逻辑
+      // 调用公司Gemini-2.5-Pro进行视觉理解
+      return await this.geminiVisionAPI.locateElement(instruction, screenshot);
+    }
+  }
+  ```
+
+**👁️ 多模态分析器 - 集成公司AI模型**
+- **改造重点**: **集成公司的Gemini-2.5-Pro和GPT-4.0，替代原有AI调用**
+- **模型集成策略**:
+  ```typescript
+  export class MultimodalAnalyzer {
+    constructor(
+      private companyGeminiAPI: CompanyGeminiAPI,    // 公司内部Gemini-2.5-Pro
+      private companyGPTAPI: CompanyGPTAPI           // 公司内部GPT-4.0
+    ) {}
+    
+    async analyzeTestScenario(
+      instruction: string,
+      uiTree: ExtendedUITree,
+      screenshot: Buffer,
+      context: TestContext
+    ): Promise<MultimodalAnalysisResult> {
+      
+      // 1. GPT-4.0解析测试指令和规划步骤
+      const instructionAnalysis = await this.companyGPTAPI.analyzeInstruction({
+        instruction,
+        context: {
+          screen_type: uiTree.semantic_context.screen_type,
+          available_elements: this.extractElementSummary(uiTree)
+        }
+      });
+      
+      // 2. Gemini-2.5-Pro进行视觉理解和验证
+      const visualAnalysis = await this.companyGeminiAPI.analyzeScreenshot({
+        image: screenshot,
+        ui_structure: uiTree,
+        task_context: instructionAnalysis.planned_actions
+      });
+      
+      // 3. 多模态融合决策
+      return this.fuseAnalysisResults(instructionAnalysis, visualAnalysis);
+    }
+  }
+  ```
+
+**🔄 自动化测试执行器 - 批量回归测试**
+- **核心功能**: 专门为回归测试设计的批量执行引擎
+- **执行特点**:
+  ```typescript
+  export class AutomatedTestExecutor {
+    async executeBatchTests(
+      testSuiteConfig: TestSuiteConfig,
+      devices: DevicePool[]
+    ): Promise<BatchExecutionResult> {
+      
+      // 1. 加载测试用例
+      const testCases = await this.loadTestCases(testSuiteConfig.testCasePatterns);
+      
+      // 2. 设备分配和并行执行
+      const deviceGroups = this.allocateDevicesToTests(testCases, devices);
+      
+      // 3. 并行执行测试
+      const executionPromises = deviceGroups.map(async (group) => {
+        return await this.executeTestGroup(group.tests, group.device);
+      });
+      
+      // 4. 等待所有测试完成并汇总结果
+      const results = await Promise.allSettled(executionPromises);
+      
+      return this.aggregateResults(results);
+    }
+  }
   ```
 
 ##### **设备驱动层组件说明 (新增)**
@@ -315,87 +751,292 @@ graph TB
     screenshot_on_failure: true
   ```
 
-##### **简化后的使用场景**
+### **📊 双模式使用场景对比**
 
-| 使用场景 | 接入方式 | 用户群体 | 部署要求 |
-|---------|----------|----------|---------|
-| **开发调试** | Cursor IDE插件 | 开发工程师 | 本地安装MCP客户端 |
-| **全回归测试** | CLI测试脚本 | 开发/测试/CI系统 | 本地安装CLI工具 |
+| 阶段 | 使用场景 | 技术方案 | 用户群体 | 核心优势 | 部署要求 |
+|------|----------|----------|----------|----------|----------|
+| **🔧 开发阶段** | 即时测试验证 | Mobile-MCP Server + Cursor | 开发工程师 | 交互灵活，即时反馈 | 启动Mobile-MCP Server |
+| **🚀 回归阶段** | 自动化回归测试 | 扩展Midscene框架 + CLI | 测试团队/CI系统 | 批量执行，智能缓存 | 配置扩展框架 |
 
-##### **简化后的工作流程**
+### **🔄 双模式完整工作流程**
 
 ```mermaid
 sequenceDiagram
     participant Developer as 开发工程师
     participant Cursor as Cursor IDE
-    participant MCP as Mobile-MCP客户端
-    participant AI as AI服务(GPT/Gemini)
-    participant ADB as ADB/WebDriverAgent
+    participant MCPServer as Mobile-MCP Server
+    participant CLI as CLI测试脚本
+    participant ExtMidscene as 扩展Midscene框架
+    participant CompanyGemini as 公司Gemini-2.5-Pro
+    participant CompanyGPT as 公司GPT-4.0
+    participant UITree as UI树引擎
+    participant DeviceOp as 统一设备操作层
     participant Devices as 移动设备
-    participant Files as 本地文件
+    participant LocalStorage as 本地存储
     
-    Note over Developer, Files: 开发调试流程(Cursor)
-    Developer->>Cursor: 输入测试指令
-    Cursor->>MCP: MCP协议调用
-    MCP->>AI: 解析指令
-    AI-->>MCP: 返回操作计划
-    MCP->>ADB: 执行设备操作
-    ADB->>Devices: 实际设备操作
-    Devices-->>ADB: 返回结果
-    ADB-->>MCP: 操作结果
-    MCP->>Files: 保存截图/结果
-    MCP-->>Cursor: 返回执行结果
-    
-    Note over Developer, Files: 全回归测试流程(CLI)
-    Developer->>Cursor: 运行CLI命令
-    Cursor->>MCP: 批量测试执行
-    loop 多个测试用例
-        MCP->>AI: 解析测试用例
-        MCP->>ADB: 执行测试步骤
-        ADB->>Devices: 设备操作
-        MCP->>Files: 保存结果
+    rect rgb(230, 240, 250)
+        Note over Developer, LocalStorage: 🔧 开发阶段 - Mobile-MCP Server + Cursor
+        
+        Developer->>Cursor: "测试登录功能，用户名test@example.com"
+        
+        Note over Cursor: Cursor中配置模型选择
+        Cursor->>MCPServer: MCP协议 + 模型配置偏好
+        
+        MCPServer->>CompanyGPT: 解析自然语言指令
+        CompanyGPT-->>MCPServer: 返回结构化任务计划
+        
+        MCPServer->>DeviceOp: 获取当前UI状态
+        DeviceOp->>Devices: 获取截图 + UI结构
+        Devices-->>DeviceOp: 返回UI数据
+        
+        MCPServer->>CompanyGemini: 视觉分析 + 元素定位
+        CompanyGemini-->>MCPServer: 返回定位结果
+        
+        MCPServer->>DeviceOp: 执行操作序列
+        DeviceOp->>Devices: 点击、输入、验证等操作
+        Devices-->>DeviceOp: 操作执行结果
+        
+        MCPServer->>LocalStorage: 保存执行记录
+        MCPServer-->>Cursor: 实时返回执行结果
+        Cursor-->>Developer: 显示测试结果和截图
     end
-    MCP-->>Cursor: 生成测试报告
+    
+    rect rgb(240, 250, 230)
+        Note over Developer, LocalStorage: 🚀 回归阶段 - 扩展Midscene框架
+        
+        Developer->>CLI: 触发批量回归测试
+        CLI->>ExtMidscene: 加载测试用例配置
+        
+        loop 批量测试执行
+            ExtMidscene->>UITree: 获取Mobile-MCP风格UI树
+            UITree->>DeviceOp: 提取设备UI结构
+            DeviceOp->>Devices: 获取UI dump + 截图
+            Devices-->>UITree: 返回标准化UI树
+            
+            ExtMidscene->>CompanyGPT: 解析测试指令
+            ExtMidscene->>CompanyGemini: 视觉理解 + 混合定位
+            
+            par 多模态并行分析
+                CompanyGPT-->>ExtMidscene: 指令解析结果
+            and
+                CompanyGemini-->>ExtMidscene: 视觉分析结果
+            end
+            
+            ExtMidscene->>ExtMidscene: 混合定位决策
+            ExtMidscene->>DeviceOp: 执行测试步骤
+            DeviceOp->>Devices: 批量设备操作
+            Devices-->>ExtMidscene: 返回执行结果
+            
+            ExtMidscene->>LocalStorage: 缓存AI分析结果
+        end
+        
+        ExtMidscene->>LocalStorage: 保存完整测试报告
+        ExtMidscene-->>CLI: 返回批量测试结果
+        CLI-->>Developer: 生成汇总报告
+    end
 ```
 
-##### **架构简化优势总结**
+### **🎯 双模式架构优势总结**
 
-**✅ 去掉的后台服务组件**:
-- ❌ Web管理控制台 - 无需Web界面
-- ❌ REST API接口 - 无需API服务器
-- ❌ PostgreSQL数据库 - 无需数据库服务
-- ❌ Redis缓存服务 - 无需缓存服务器
-- ❌ 业务编排层 - 简化为本地直接调用
-- ❌ 监控告警服务 - 简化为本地日志
+#### **🔧 开发阶段优势 (Mobile-MCP Server + Cursor)**
 
-**✅ 保留的核心能力**:
-- ✅ Cursor IDE集成 - 开发时即时测试
-- ✅ CLI本地执行 - 全回归测试能力
-- ✅ AI智能分析 - GPT-4.0 + Gemini-2.5-Pro
-- ✅ 设备操作 - ADB + WebDriverAgent
-- ✅ 本地存储 - 文件存储测试结果
-- ✅ 配置管理 - 本地配置文件
+**✅ 开发体验优势**:
+- ✅ **Cursor原生集成** - 无需切换工具，开发环境直接测试
+- ✅ **实时交互反馈** - 即时查看测试执行过程和结果
+- ✅ **灵活模型选择** - 开发者可在Cursor中自由配置AI模型偏好
+- ✅ **快速问题定位** - 测试失败时可立即查看截图和错误信息
+- ✅ **自然语言操作** - 无需编写复杂测试脚本，直接用自然语言描述
 
-**🚀 简化后的部署优势**:
-- **零后台服务**: 无需部署任何服务器
-- **快速启动**: 本地安装即可使用
-- **轻量级**: 只需要必要的本地工具
-- **易维护**: 无服务器运维负担
+**✅ 技术架构优势**:
+- ✅ **MCP协议标准化** - 使用业界标准协议，可扩展性强
+- ✅ **模型配置灵活** - 支持任务类型驱动的智能模型选择
+- ✅ **轻量级部署** - 只需启动Mobile-MCP Server，无复杂依赖
 
-#### 2.1.3 简化系统依赖关系矩阵
+#### **🚀 回归阶段优势 (扩展Midscene框架)**
+
+**✅ 自动化测试优势**:
+- ✅ **批量执行能力** - 支持大规模回归测试的并行执行
+- ✅ **UI树结构增强** - 集成Mobile-MCP的UI解析能力，定位更准确
+- ✅ **混合定位策略** - 结构化定位 + 视觉定位，双重保障
+- ✅ **智能缓存优化** - AI分析结果缓存，提高执行效率
+- ✅ **企业级AI集成** - 使用公司内部Gemini-2.5-Pro和GPT-4.0
+
+**✅ 框架改造优势**:
+- ✅ **保持Midscene优势** - 继承原有视觉定位和测试能力
+- ✅ **增强结构化能力** - 新增Mobile-MCP风格的UI树解析
+- ✅ **公司AI模型适配** - 无缝集成公司内部AI服务
+- ✅ **统一设备接口** - Android/iOS操作层统一，降低维护成本
+
+#### **🌟 双模式协同优势**
+
+**✅ 统一技术栈**:
+- ✅ **共享设备操作层** - 两个阶段使用相同的设备驱动和操作接口
+- ✅ **统一AI模型服务** - 开发和回归阶段使用相同的公司AI模型
+- ✅ **一致的UI树结构** - Mobile-MCP风格的UI解析在两阶段通用
+- ✅ **统一存储格式** - 测试结果和配置文件格式保持一致
+
+**✅ 工作流整合**:
+- ✅ **无缝切换** - 开发阶段验证的测试逻辑可直接用于回归测试
+- ✅ **配置复用** - Cursor中的模型配置可导出用于回归测试
+- ✅ **结果关联** - 开发测试和回归测试结果可统一分析
+- ✅ **知识积累** - AI分析结果可在两阶段间共享和优化
+
+#### **📊 与传统方案对比**
+
+| 对比维度 | 传统Appium | 双模式AI自动化 |
+|---------|-----------|---------------|
+| **开发体验** | 需要专门IDE/工具 | Cursor原生集成，自然语言操作 |
+| **元素定位** | 依赖固定ID/XPath | UI树结构 + 视觉混合定位 |
+| **AI能力** | 无AI支持 | 公司级双模型 (Gemini+GPT) |
+| **维护成本** | 高 (脚本易失效) | 低 (AI自适应定位) |
+| **学习曲线** | 陡峭 (需要技术背景) | 平缓 (自然语言描述) |
+| **跨平台支持** | 需要不同配置 | 统一接口，自动适配 |
+| **批量执行** | 配置复杂 | 智能缓存，高效并行 |
+| **模型选择** | 不适用 | 开发者可灵活配置 |
+
+#### **🏆 核心竞争优势**
+
+1. **🎯 双阶段适配** - 既满足开发阶段的灵活交互需求，又支持回归阶段的批量自动化
+2. **🧠 企业AI集成** - 充分利用公司内部的Gemini和GPT模型服务  
+3. **🔧 最佳实践融合** - 结合Mobile-MCP的结构化定位和Midscene的视觉能力
+4. **⚡ 开发效率提升** - Cursor原生集成，自然语言操作，大幅降低测试门槛
+5. **🔄 技术债务减少** - AI自适应定位，减少因UI变更导致的脚本维护工作
+
+#### 2.1.3 双模式架构依赖关系矩阵
+
+##### **开发阶段依赖关系 (Mobile-MCP Server + Cursor)**
 
 | 层级 | 上级依赖 | 同级依赖 | 下级依赖 |
 |------|----------|----------|----------|
-| **用户接入层** | 操作系统、IDE环境 | 本地配置文件 | 本地框架层 |
-| **本地框架层** | 用户接入层 | 本地配置管理、本地缓存 | AI决策核心层 |
-| **AI决策核心层** | 本地框架层 | 外部AI API服务 | 多模态理解层 |
-| **多模态理解层** | AI决策核心层 | 外部AI API服务 | 设备操作层 |
-| **设备操作层** | 多模态理解层 | 本地存储 | 设备驱动层 |
-| **设备驱动层** | 设备操作层 | 移动设备OS | 移动设备硬件 |
-| **外部API服务** | 网络连接 | API密钥管理 | AI决策/多模态层 |
-| **本地存储** | 文件系统 | 存储权限 | 各业务层 |
+| **Cursor IDE环境** | 操作系统、Node.js | MCP Plugin、模型配置器 | Mobile-MCP Server |
+| **Mobile-MCP Server** | Cursor IDE环境 | MCP协议栈、AI模型调度器 | 统一设备操作层 |
+| **公司AI模型服务** | 网络连接、API认证 | Gemini-2.5-Pro、GPT-4.0 | Mobile-MCP Server |
+| **统一设备操作层** | Mobile-MCP Server | Android/iOS操作器、UI树提取器 | 设备驱动层 |
 
-#### 2.1.3 数据流向图
+##### **回归阶段依赖关系 (扩展Midscene框架)**
+
+| 层级 | 上级依赖 | 同级依赖 | 下级依赖 |
+|------|----------|----------|----------|
+| **CLI测试入口** | 操作系统、测试配置 | 批量执行脚本 | 扩展Midscene框架 |
+| **扩展Midscene框架** | CLI测试入口 | UI树引擎、混合定位引擎、多模态分析器 | 统一设备操作层 |
+| **公司AI模型服务** | 网络连接、API认证 | Gemini-2.5-Pro、GPT-4.0 | 扩展Midscene框架 |
+| **统一设备操作层** | 扩展Midscene框架 | Android/iOS操作器、UI树提取器 | 设备驱动层 |
+
+##### **共享基础设施依赖关系**
+
+| 层级 | 上级依赖 | 同级依赖 | 下级依赖 |
+|------|----------|----------|----------|
+| **统一设备操作层** | 开发/回归阶段组件 | 设备状态监控、操作执行器 | 设备驱动层 |
+| **设备驱动层** | 统一设备操作层 | ADB服务、WebDriverAgent | 移动设备硬件 |
+| **本地存储** | 文件系统权限 | 配置管理、缓存系统 | 所有业务层 |
+| **公司AI模型服务** | 企业网络、API网关 | 模型适配器、负载均衡 | 开发/回归阶段 |
+
+##### **关键技术依赖详解**
+
+**🔧 Midscene框架改造依赖**:
+```typescript
+// 核心改造依赖项
+interface MidsceneExtensionDependencies {
+  // Mobile-MCP UI树结构集成
+  uiTreeParser: {
+    mobileMCPCompatibility: "^1.0.0";
+    androidUIAutomator: "^2.0.0";
+    iosXCTest: "^15.0.0";
+  };
+  
+  // 公司AI模型API适配
+  companyAIModels: {
+    geminiAPI: CompanyGeminiAPI;
+    gptAPI: CompanyGPTAPI;
+    modelAdapter: UnifiedModelAdapter;
+  };
+  
+  // 混合定位引擎依赖
+  hybridLocation: {
+    structuralLocation: MobileMCPLocationEngine;
+    visualLocation: MidsceneVisualEngine;
+    confidenceFusion: HybridDecisionEngine;
+  };
+}
+```
+
+**📡 MCP协议技术栈依赖**:
+```typescript  
+// MCP协议相关依赖
+interface MCPProtocolDependencies {
+  core: {
+    "@modelcontextprotocol/sdk": "^1.0.0";
+    "ws": "^8.0.0";  // WebSocket通信
+    "jsonrpc-lite": "^2.0.0";  // JSON-RPC协议
+  };
+  
+  cursor: {
+    "cursor-mcp-plugin": "^1.0.0";
+    "cursor-ai-models-config": "^1.0.0";
+  };
+  
+  server: {
+    "mobile-mcp-server": "^1.0.0";
+    "device-operation-coordinator": "^1.0.0";
+  };
+}
+```
+
+**🤖 公司AI模型集成依赖**:
+```typescript
+// 公司AI服务集成配置
+interface CompanyAIIntegration {
+  authentication: {
+    apiGateway: string;
+    authToken: string;
+    rateLimiting: RateLimitConfig;
+  };
+  
+  models: {
+    gemini: {
+      endpoint: "https://company-ai-gateway.internal/gemini-2.5-pro";
+      capabilities: ["vision", "multimodal"];
+      maxTokens: 4096;
+    };
+    gpt: {
+      endpoint: "https://company-ai-gateway.internal/gpt-4.0"; 
+      capabilities: ["text", "reasoning"];
+      maxTokens: 8192;
+    };
+  };
+  
+  fallback: {
+    enableFallback: true;
+    fallbackOrder: ["primary", "secondary", "external"];
+  };
+}
+```
+
+**📱 设备驱动统一依赖**:
+```typescript
+// 设备驱动层统一接口
+interface UnifiedDeviceDrivers {
+  android: {
+    adb: "android-debug-bridge@^1.0.0";
+    uiautomator: "appium-uiautomator2@^2.0.0";
+    deviceManager: AndroidDeviceManager;
+  };
+  
+  ios: {
+    webDriverAgent: "appium-webdriveragent@^4.0.0"; 
+    xctest: "ios-xctest-framework@^15.0.0";
+    deviceManager: IOSDeviceManager;
+  };
+  
+  unified: {
+    devicePool: UnifiedDevicePool;
+    operationAdapter: CrossPlatformAdapter;
+    stateMonitor: DeviceStateMonitor;
+  };
+}
+```
+
+#### 2.1.4 双模式数据流向图
 
 ```mermaid
 graph LR
