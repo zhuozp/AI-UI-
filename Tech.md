@@ -109,54 +109,43 @@ graph TD
 
 ### 2.1 Overall Design
 
-#### 2.1.1 系统总体架构
+#### 2.1.1 系统总体架构 (简化版 - 无后台服务)
 
 ```mermaid
 graph TB
     subgraph "用户接入层 - User Access Layer"
         A1[Cursor IDE插件<br/>💻 开发时即时测试]
-        A2[Web管理控制台<br/>🎛️ 测试管理和监控]
-        A3[CLI测试脚本<br/>🔄 全回归自动化]
-        A4[REST API接口<br/>🔌 第三方系统集成]
+        A3[CLI测试脚本<br/>🔄 本地全回归测试]
     end
     
-    subgraph "业务编排层 - Business Orchestration Layer"
-        B1[测试任务调度器<br/>调度测试执行]
-        B2[执行计划管理器<br/>管理测试计划]
-        B3[结果收集处理器<br/>处理测试结果]
-        B4[用户会话管理器<br/>管理用户状态]
+    subgraph "AI决策核心层 - AI Decision Core Layer (本地)"
+        C1[自然语言处理引擎<br/>本地GPT-4.0调用]
+        C2[任务规划器<br/>本地执行计划]
+        C3[策略选择器<br/>本地策略选择]
+        C4[执行协调器<br/>本地组件协调]
+        C5[结果验证器<br/>本地结果验证]
     end
     
-    subgraph "AI决策核心层 - AI Decision Core Layer"
-        C1[自然语言处理引擎<br/>GPT-4.0解析指令]
-        C2[任务规划器<br/>制定执行计划]
-        C3[策略选择器<br/>选择执行策略]
-        C4[执行协调器<br/>协调组件执行]
-        C5[结果验证器<br/>验证执行结果]
+    subgraph "多模态理解层 - Multimodal Understanding Layer (本地)"
+        D1[视觉分析服务<br/>本地Gemini-2.5-Pro调用]
+        D2[结构化数据解析器<br/>本地UI树解析]
+        D3[元素定位引擎<br/>本地混合定位]
+        D4[上下文融合器<br/>本地数据融合]
+        D5[置信度评估器<br/>本地置信度评估]
     end
     
-    subgraph "多模态理解层 - Multimodal Understanding Layer"
-        D1[视觉分析服务<br/>Gemini-2.5-Pro识别]
-        D2[结构化数据解析器<br/>UI树解析]
-        D3[元素定位引擎<br/>混合定位策略]
-        D4[上下文融合器<br/>多源数据融合]
-        D5[置信度评估器<br/>结果可信度评估]
+    subgraph "设备操作层 - Device Operation Layer (本地)"
+        E1[Android操作适配器<br/>🤖 直接ADB调用]
+        E2[iOS操作适配器<br/>🍎 直接WebDriverAgent调用]
+        E3[设备连接管理器<br/>本地设备管理]
+        E4[操作执行器<br/>本地操作执行]
     end
     
-    subgraph "设备操作层 - Device Operation Layer"
-        E1[Android操作适配器<br/>🤖 ADB + UIAutomator]
-        E2[iOS操作适配器<br/>🍎 WebDriverAgent + XCTest]
-        E3[设备连接管理器<br/>设备连接池管理]
-        E4[操作执行器<br/>具体操作执行]
-        E5[状态监控器<br/>设备状态监控]
-    end
-    
-    subgraph "基础设施层 - Infrastructure Layer"
-        F1[Mobile-MCP服务器<br/>MCP协议服务]
-        F2[Midscene框架<br/>核心测试框架]
-        F3[设备池管理器<br/>设备资源管理]
-        F4[配置管理中心<br/>配置集中管理]
-        F5[日志聚合器<br/>日志收集处理]
+    subgraph "本地框架层 - Local Framework Layer"
+        F1[Mobile-MCP客户端<br/>本地MCP客户端]
+        F2[Midscene框架<br/>本地测试框架]
+        F3[本地配置管理<br/>配置文件管理]
+        F4[本地缓存<br/>文件缓存]
     end
     
     subgraph "设备驱动层 - Device Driver Layer"
@@ -167,151 +156,93 @@ graph TB
         G5[真机设备<br/>Physical Devices]
     end
     
-    subgraph "外部服务层 - External Services Layer"
+    subgraph "外部API服务 - External API Services"
         H1[Gemini-2.5-Pro API<br/>视觉理解模型]
         H2[GPT-4.0 API<br/>自然语言处理]
-        H3[监控告警服务<br/>系统监控]
-        H4[CI/CD系统<br/>持续集成]
     end
     
-    subgraph "数据存储层 - Data Storage Layer"
-        I1[PostgreSQL主数据库<br/>结构化数据]
-        I2[Redis缓存集群<br/>缓存加速]
-        I3[MinIO对象存储<br/>截图/视频文件]
-        I4[InfluxDB时序数据库<br/>监控指标]
+    subgraph "本地存储 - Local Storage"
+        I1[本地文件存储<br/>测试结果/截图]
+        I2[配置文件<br/>YAML/JSON配置]
+        I3[临时缓存<br/>执行过程缓存]
     end
     
-    %% 用户接入层连接
-    A1 --> B4
-    A2 --> B2
-    A3 --> B1
-    A4 --> B3
+    %% 直接连接，去掉中间层
+    A1 --> F1
+    A3 --> F2
     
-    %% 业务编排层连接
-    B1 --> C2
-    B2 --> C1
-    B3 --> C4
-    B4 --> C3
+    F1 --> C1
+    F2 --> C2
     
-    %% AI决策核心层连接
     C1 --> D1
     C2 --> D2
     C3 --> D3
     C4 --> D4
     C5 --> D5
     
-    %% 多模态理解层连接
-    D1 --> E2
-    D2 --> E1
-    D3 --> E4
-    D4 --> E3
-    D5 --> E5
+    D1 --> E1
+    D2 --> E2
+    D3 --> E3
+    D4 --> E4
     
-    %% 设备操作层连接
     E1 --> G1
     E2 --> G2
-    E3 --> F3
-    E4 --> F2
-    E5 --> F5
+    E3 --> G3
+    E3 --> G4
+    E3 --> G5
     
-    %% 基础设施层连接
-    F1 --> G1
-    F2 --> G2
-    F3 --> G3
-    F3 --> G4
-    F3 --> G5
-    
-    %% 外部服务连接
+    %% 外部API调用
     C1 --> H2
     D1 --> H1
-    F5 --> H3
-    B1 --> H4
     
-    %% 数据存储连接
-    B2 --> I1
-    D4 --> I2
-    E4 --> I3
-    F5 --> I4
+    %% 本地存储
+    C4 --> I1
+    D4 --> I3
+    F3 --> I2
     
     style A1 fill:#e1f5fe
-    style A2 fill:#e8f5e8
     style A3 fill:#fff3e0
-    style A4 fill:#ffebee
+    style C1 fill:#e8f5e8
     style E1 fill:#90EE90
     style E2 fill:#FFB6C1
     style G1 fill:#DDA0DD
     style G2 fill:#F0E68C
+    style H1 fill:#FFA500
+    style H2 fill:#32CD32
 ```
 
-#### 2.1.2 核心组件详细说明
+#### 2.1.2 核心组件详细说明 (简化本地架构)
 
-让我针对您关心的几个关键组件进行详细说明：
+**🎯 架构简化说明**:
+- **去掉后台服务**: 无需Web服务、数据库、API服务器等后台组件
+- **本地执行**: 所有组件都在本地运行，直接调用外部AI API
+- **轻量化部署**: 只需安装必要的本地工具和依赖
 
 ##### **用户接入层组件说明**
 
-**🔌 REST API接口 - 第三方系统集成**
-- **用途**: 为外部系统提供编程式调用能力
-- **是否必要**: **非常必要**，主要用于：
+**💻 Cursor IDE插件 - 开发时即时测试**
+- **运行方式**: 通过MCP协议直接调用本地AI+设备操作能力
+- **使用场景**: 开发过程中的快速验证和调试
+- **技术实现**:
   ```typescript
-  // CI/CD系统集成调用
-  POST /api/v1/test/execute
-  {
-    "testSuite": "regression_test_suite",
-    "devices": ["android-pixel-6", "ios-iphone-14"],
-    "environment": "staging"
-  }
-  
-  // Jenkins流水线调用
-  curl -X POST "https://ai-ui-test.company.com/api/v1/test/batch" \
-    -H "Authorization: Bearer ${API_TOKEN}" \
-    -d '{"testCases": ["TC001", "TC002"], "parallel": true}'
-  
-  // 监控系统状态查询
-  GET /api/v1/devices/status
-  GET /api/v1/test/results/{execution_id}
+  // Cursor中直接调用
+  // 用户: "点击登录按钮并输入用户名test@example.com"
+  // MCP会直接调用本地AI处理 + 设备操作
   ```
 
-**🔄 CLI测试脚本 - 全回归自动化**
-- **是的，就是您说的全回归脚本**，典型使用场景：
+**🔄 CLI测试脚本 - 本地全回归测试**
+- **运行方式**: 本地命令行工具，直接执行测试
+- **使用场景**: 全回归测试、CI/CD集成、定时任务
+- **技术实现**:
   ```bash
-  # 全回归测试触发
-  ./run-regression-tests.sh --suite=full --parallel --devices=all
+  # 本地全回归测试
+  ./ai-ui-test run --config=config.yaml --suite=regression
   
-  # 定时任务调用
-  0 2 * * * /opt/ai-ui-test/bin/nightly-regression.sh
+  # 指定设备测试
+  ./ai-ui-test run --device=android --test-case=login_flow
   
-  # CI/CD流水线中的调用
-  ai-ui-test run \
-    --config=prod-config.yml \
-    --testplan=regression-plan.json \
-    --report-format=junit \
-    --output=./test-results/
-  ```
-
-**🎛️ Web管理控制台 - 测试管理和监控**
-- **功能定位**: 可视化的测试管理平台
-- **主要功能**:
-  ```mermaid
-  graph TB
-      WebConsole[Web管理控制台]
-      WebConsole --> TestMgmt[测试用例管理]
-      WebConsole --> ExecMgmt[执行计划管理]
-      WebConsole --> DeviceMgmt[设备池管理]
-      WebConsole --> ResultView[结果可视化]
-      WebConsole --> Monitor[实时监控]
-      WebConsole --> Config[系统配置]
-      
-      TestMgmt --> CreateTest[创建测试用例]
-      TestMgmt --> EditTest[编辑测试脚本]
-      TestMgmt --> ImportTest[批量导入]
-      
-      ExecMgmt --> Schedule[定时调度]
-      ExecMgmt --> BatchRun[批量执行]
-      ExecMgmt --> Pipeline[流水线管理]
-      
-      DeviceMgmt --> DeviceStatus[设备状态查看]
-      DeviceMgmt --> ResourceAlloc[资源分配]
-      DeviceMgmt --> Maintenance[设备维护]
+  # 并行测试
+  ./ai-ui-test run --parallel --devices=all --output=./results/
   ```
 
 ##### **设备驱动层组件说明 (新增)**
@@ -350,84 +281,119 @@ graph TB
   const screenshot = await driver.getScreenshot();
   ```
 
-##### **实际使用场景对比**
+##### **本地存储层组件说明**
 
-| 使用场景 | 接入方式 | 用户群体 | 使用频率 |
-|---------|----------|----------|----------|
-| **开发调试** | Cursor IDE插件 | 开发工程师 | 每日多次 |
-| **测试管理** | Web管理控制台 | 测试团队、管理者 | 每日使用 |
-| **全回归测试** | CLI测试脚本 | CI/CD系统、运维 | 定时执行 |
-| **系统集成** | REST API接口 | 外部系统、第三方 | 按需调用 |
+**📁 本地文件存储 - 测试结果和截图**
+- **作用**: 存储测试执行结果、截图、视频等文件
+- **存储路径**: `./test-results/`, `./screenshots/`, `./logs/`
+- **文件格式**: JSON(结果)、PNG(截图)、MP4(录屏)、TXT(日志)
 
-##### **典型工作流程**
+**⚙️ 配置文件 - YAML/JSON配置**
+- **作用**: 管理测试配置、设备配置、AI API配置等
+- **配置文件**:
+  ```yaml
+  # config.yaml
+  ai_apis:
+    gemini:
+      api_key: ${GEMINI_API_KEY}
+      model: "gemini-2.5-pro"
+    openai:
+      api_key: ${OPENAI_API_KEY}
+      model: "gpt-4.0"
+  
+  devices:
+    android:
+      - device_id: "emulator-5554"
+        type: "emulator"
+    ios:
+      - device_id: "auto"
+        type: "simulator"
+  
+  test_config:
+    timeout: 30000
+    retry_count: 3
+    screenshot_on_failure: true
+  ```
+
+##### **简化后的使用场景**
+
+| 使用场景 | 接入方式 | 用户群体 | 部署要求 |
+|---------|----------|----------|---------|
+| **开发调试** | Cursor IDE插件 | 开发工程师 | 本地安装MCP客户端 |
+| **全回归测试** | CLI测试脚本 | 开发/测试/CI系统 | 本地安装CLI工具 |
+
+##### **简化后的工作流程**
 
 ```mermaid
 sequenceDiagram
     participant Developer as 开发工程师
     participant Cursor as Cursor IDE
-    participant WebConsole as Web控制台
-    participant CLI as CLI脚本
-    participant CICD as CI/CD系统
+    participant MCP as Mobile-MCP客户端
+    participant AI as AI服务(GPT/Gemini)
     participant ADB as ADB/WebDriverAgent
     participant Devices as 移动设备
+    participant Files as 本地文件
     
-    Note over Developer, Devices: 日常开发测试流程
-    Developer->>Cursor: 编写代码后即时测试
-    Cursor->>ADB: 通过MCP调用设备操作
-    ADB->>Devices: 执行具体操作
+    Note over Developer, Files: 开发调试流程(Cursor)
+    Developer->>Cursor: 输入测试指令
+    Cursor->>MCP: MCP协议调用
+    MCP->>AI: 解析指令
+    AI-->>MCP: 返回操作计划
+    MCP->>ADB: 执行设备操作
+    ADB->>Devices: 实际设备操作
+    Devices-->>ADB: 返回结果
+    ADB-->>MCP: 操作结果
+    MCP->>Files: 保存截图/结果
+    MCP-->>Cursor: 返回执行结果
     
-    Note over Developer, Devices: 测试管理流程
-    Developer->>WebConsole: 创建/管理测试用例
-    WebConsole->>CLI: 触发批量测试执行
-    CLI->>ADB: 批量设备操作
-    
-    Note over Developer, Devices: 持续集成流程  
-    CICD->>CLI: 定时触发全回归测试
-    CLI->>ADB: 并行执行多设备测试
-    CLI->>WebConsole: 上报测试结果
+    Note over Developer, Files: 全回归测试流程(CLI)
+    Developer->>Cursor: 运行CLI命令
+    Cursor->>MCP: 批量测试执行
+    loop 多个测试用例
+        MCP->>AI: 解析测试用例
+        MCP->>ADB: 执行测试步骤
+        ADB->>Devices: 设备操作
+        MCP->>Files: 保存结果
+    end
+    MCP-->>Cursor: 生成测试报告
 ```
 
-##### **您的问题解答总结**
+##### **架构简化优势总结**
 
-**Q1: REST API接口是干嘛用的？是否有必要？**
-- **A**: **非常必要**！主要用于：
-  - CI/CD系统自动调用测试
-  - Jenkins等流水线工具集成
-  - 监控系统查询状态
-  - 第三方系统数据对接
+**✅ 去掉的后台服务组件**:
+- ❌ Web管理控制台 - 无需Web界面
+- ❌ REST API接口 - 无需API服务器
+- ❌ PostgreSQL数据库 - 无需数据库服务
+- ❌ Redis缓存服务 - 无需缓存服务器
+- ❌ 业务编排层 - 简化为本地直接调用
+- ❌ 监控告警服务 - 简化为本地日志
 
-**Q2: 是否有必要补充ADB、WebDriverAgent到架构里？**
-- **A**: **绝对必要**！已经补充到"设备驱动层"：
-  - ADB是Android设备通信的核心
-  - WebDriverAgent是iOS设备自动化的基础
-  - 没有它们就无法操作移动设备
+**✅ 保留的核心能力**:
+- ✅ Cursor IDE集成 - 开发时即时测试
+- ✅ CLI本地执行 - 全回归测试能力
+- ✅ AI智能分析 - GPT-4.0 + Gemini-2.5-Pro
+- ✅ 设备操作 - ADB + WebDriverAgent
+- ✅ 本地存储 - 文件存储测试结果
+- ✅ 配置管理 - 本地配置文件
 
-**Q3: 全回归UI自动化测试脚本和CLI命令行工具是一个意思吗？**
-- **A**: **是的，完全一样**！CLI测试脚本就是用来：
-  - 触发全回归测试执行
-  - 定时任务调度
-  - CI/CD流水线集成
-  - 批量测试管理
+**🚀 简化后的部署优势**:
+- **零后台服务**: 无需部署任何服务器
+- **快速启动**: 本地安装即可使用
+- **轻量级**: 只需要必要的本地工具
+- **易维护**: 无服务器运维负担
 
-**Q4: Web管理控制台怎么理解？**
-- **A**: 这是一个**可视化的测试管理平台**，提供：
-  - 测试用例的创建和管理
-  - 执行计划的配置和调度
-  - 设备池的监控和管理
-  - 测试结果的可视化展示
-  - 系统配置和用户权限管理
-
-#### 2.1.3 系统依赖关系矩阵
+#### 2.1.3 简化系统依赖关系矩阵
 
 | 层级 | 上级依赖 | 同级依赖 | 下级依赖 |
 |------|----------|----------|----------|
-| **前端接入层** | IDE工具链、浏览器 | 用户认证服务、权限管理 | 业务编排层 |
-| **业务编排层** | 前端接入层 | 配置中心、消息队列 | AI决策核心层 |
-| **AI决策核心层** | 业务编排层 | 模型服务、缓存系统 | 多模态理解层 |
-| **多模态理解层** | AI决策核心层 | 图像处理服务 | 设备操作层 |
-| **设备操作层** | 多模态理解层 | 设备驱动程序 | 基础设施层 |
-| **基础设施层** | 设备操作层 | 网络服务、存储服务 | 外部服务层 |
-| **外部服务层** | 基础设施层 | 网络基础设施 | 无 |
+| **用户接入层** | 操作系统、IDE环境 | 本地配置文件 | 本地框架层 |
+| **本地框架层** | 用户接入层 | 本地配置管理、本地缓存 | AI决策核心层 |
+| **AI决策核心层** | 本地框架层 | 外部AI API服务 | 多模态理解层 |
+| **多模态理解层** | AI决策核心层 | 外部AI API服务 | 设备操作层 |
+| **设备操作层** | 多模态理解层 | 本地存储 | 设备驱动层 |
+| **设备驱动层** | 设备操作层 | 移动设备OS | 移动设备硬件 |
+| **外部API服务** | 网络连接 | API密钥管理 | AI决策/多模态层 |
+| **本地存储** | 文件系统 | 存储权限 | 各业务层 |
 
 #### 2.1.3 数据流向图
 
@@ -986,21 +952,20 @@ sequenceDiagram
     end
 ```
 
-##### 3.2.3.4 完整系统交互时序图
+##### 3.2.3.4 简化系统交互时序图 (本地执行)
 
 ```mermaid
 sequenceDiagram
     participant User as 用户
     participant Cursor as Cursor IDE
-    participant MCP as Mobile-MCP
-    participant AIEngine as AI决策引擎
-    participant Multimodal as 多模态理解层
-    participant GeminiAPI as Gemini-2.5-Pro
-    participant GPTAPI as GPT-4.0
-    participant DeviceOp as 设备操作层
+    participant MCP as Mobile-MCP(本地)
+    participant AIEngine as AI决策引擎(本地)
+    participant Multimodal as 多模态理解层(本地)
+    participant GeminiAPI as Gemini-2.5-Pro API
+    participant GPTAPI as GPT-4.0 API
+    participant DeviceOp as 设备操作层(本地)
     participant Device as 移动设备
-    participant Cache as 缓存系统
-    participant DB as 数据库
+    participant LocalFiles as 本地文件存储
     
     User->>Cursor: 输入自然语言指令
     Cursor->>MCP: 发送测试指令
@@ -1009,25 +974,20 @@ sequenceDiagram
     Note over AIEngine: 指令解析和任务规划
     AIEngine->>GPTAPI: 解析自然语言指令
     GPTAPI-->>AIEngine: 返回结构化任务
-    AIEngine->>Cache: 检查缓存
     
-    alt 缓存未命中
-        AIEngine->>DeviceOp: 获取屏幕状态
-        DeviceOp->>Device: screenshot + UI dump
-        Device-->>DeviceOp: 返回屏幕数据
-        DeviceOp-->>AIEngine: 屏幕状态信息
-        
-        AIEngine->>Multimodal: 分析屏幕内容
-        Multimodal->>GeminiAPI: 视觉分析请求
-        GeminiAPI-->>Multimodal: 返回视觉理解结果
-        Multimodal-->>AIEngine: 元素定位结果
-        
-        AIEngine->>Cache: 缓存分析结果
-    else 缓存命中
-        Cache-->>AIEngine: 返回缓存的分析结果
-    end
+    Note over AIEngine: 获取设备状态
+    AIEngine->>DeviceOp: 获取屏幕状态
+    DeviceOp->>Device: screenshot + UI dump
+    Device-->>DeviceOp: 返回屏幕数据
+    DeviceOp-->>AIEngine: 屏幕状态信息
     
-    Note over AIEngine: 执行策略选择
+    Note over AIEngine: 多模态分析
+    AIEngine->>Multimodal: 分析屏幕内容
+    Multimodal->>GeminiAPI: 视觉分析请求
+    GeminiAPI-->>Multimodal: 返回视觉理解结果
+    Multimodal-->>AIEngine: 元素定位结果
+    
+    Note over AIEngine: 执行策略选择和操作
     AIEngine->>DeviceOp: 执行操作指令
     DeviceOp->>Device: 执行具体操作
     Device-->>DeviceOp: 返回操作结果
@@ -1042,427 +1002,421 @@ sequenceDiagram
     GeminiAPI-->>Multimodal: 验证结果
     Multimodal-->>AIEngine: 验证通过
     
-    AIEngine->>DB: 保存执行记录
+    Note over AIEngine: 本地保存结果
+    AIEngine->>LocalFiles: 保存执行记录/截图
     AIEngine-->>MCP: 返回执行结果
     MCP-->>Cursor: 返回测试结果
     Cursor-->>User: 显示执行结果
 ```
 
-##### 3.2.3.5 部署架构图
+##### 3.2.3.5 简化本地部署架构
 
 ```mermaid
 graph TB
-    subgraph "负载均衡层"
-        LB[Nginx负载均衡器]
-    end
-    
-    subgraph "应用服务集群"
-        App1[AI-UI-App实例1]
-        App2[AI-UI-App实例2]
-        App3[AI-UI-App实例3]
-    end
-    
-    subgraph "AI服务集群"
-        AI1[AI决策服务1]
-        AI2[AI决策服务2]
-        MM1[多模态服务1]
-        MM2[多模态服务2]
-    end
-    
-    subgraph "设备服务集群"
-        Dev1[设备操作服务1]
-        Dev2[设备操作服务2]
-        MCP1[Mobile-MCP服务1]
-        MCP2[Mobile-MCP服务2]
-    end
-    
-    subgraph "数据存储集群"
-        PG1[(PostgreSQL主)]
-        PG2[(PostgreSQL从)]
-        Redis1[(Redis集群节点1)]
-        Redis2[(Redis集群节点2)]
-        Redis3[(Redis集群节点3)]
-        Minio1[(MinIO节点1)]
-        Minio2[(MinIO节点2)]
-    end
-    
-    subgraph "设备池"
-        Android1[Android设备1]
-        Android2[Android设备2]
-        iOS1[iOS设备1]
-        iOS2[iOS设备2]
-        Emulator1[Android模拟器1]
-        Emulator2[iOS模拟器1]
-    end
-    
-    subgraph "外部API服务"
-        GeminiCloud[Gemini-2.5-Pro API]
-        GPTCloud[GPT-4.0 API]
-    end
-    
-    subgraph "监控运维"
-        Prometheus[Prometheus监控]
-        Grafana[Grafana仪表盘]
-        ELK[ELK日志系统]
-        Alertmanager[告警管理器]
-    end
-    
-    LB --> App1
-    LB --> App2
-    LB --> App3
-    
-    App1 --> AI1
-    App2 --> AI2
-    App3 --> MM1
-    AI1 --> MM2
-    
-    MM1 --> Dev1
-    MM2 --> Dev2
-    Dev1 --> MCP1
-    Dev2 --> MCP2
-    
-    AI1 --> PG1
-    AI2 --> PG2
-    MM1 --> Redis1
-    MM2 --> Redis2
-    App1 --> Redis3
-    Dev1 --> Minio1
-    Dev2 --> Minio2
-    
-    MCP1 --> Android1
-    MCP1 --> Android2
-    MCP1 --> Emulator1
-    MCP2 --> iOS1
-    MCP2 --> iOS2
-    MCP2 --> Emulator2
-    
-    AI1 --> GeminiCloud
-    AI2 --> GPTCloud
-    MM1 --> GeminiCloud
-    MM2 --> GPTCloud
-    
-    App1 --> Prometheus
-    App2 --> Prometheus
-    Dev1 --> Prometheus
-    Prometheus --> Grafana
-    Prometheus --> Alertmanager
-    
-    style LB fill:#ff9999
-    style PG1 fill:#99ccff
-    style GeminiCloud fill:#ffcc99
-    style GPTCloud fill:#99ff99
-```
-
-##### 3.2.3.6 缓存架构设计
-
-```mermaid
-graph TB
-    subgraph "应用层缓存"
-        AppCache[应用内存缓存]
-        SessionCache[会话缓存]
-    end
-    
-    subgraph "分布式缓存层"
-        RedisCluster[Redis集群]
-        subgraph "缓存分片"
-            Shard1[分片1 - 视觉分析缓存]
-            Shard2[分片2 - 元素定位缓存]
-            Shard3[分片3 - 设备状态缓存]
+    subgraph "开发工作站 - Developer Workstation"
+        subgraph "IDE环境"
+            Cursor[Cursor IDE<br/>with MCP Plugin]
+        end
+        
+        subgraph "本地AI+UI测试工具"
+            CLI[AI-UI-Test CLI<br/>本地命令行工具]
+            MCPClient[Mobile-MCP Client<br/>本地MCP客户端]
+        end
+        
+        subgraph "本地配置文件"
+            Config[config.yaml<br/>配置文件]
+            APIKeys[.env<br/>API密钥文件]
+            TestCases[test-cases/<br/>测试用例目录]
+        end
+        
+        subgraph "本地存储"
+            Results[test-results/<br/>测试结果]
+            Screenshots[screenshots/<br/>截图文件]
+            Logs[logs/<br/>日志文件]
+            Cache[cache/<br/>临时缓存]
         end
     end
     
-    subgraph "持久化缓存"
-        FileCache[文件系统缓存]
-        DBCache[数据库查询缓存]
+    subgraph "设备环境 - Device Environment"
+        subgraph "Android设备"
+            AndroidDevice[Android真机]
+            AndroidEmulator[Android模拟器]
+            ADB[ADB服务]
+        end
+        
+        subgraph "iOS设备"
+            iOSDevice[iOS真机]
+            iOSSimulator[iOS模拟器]  
+            WDA[WebDriverAgent]
+        end
     end
     
-    subgraph "缓存策略"
-        LRU[LRU淘汰策略]
-        TTL[TTL过期策略]
-        BloomFilter[布隆过滤器]
+    subgraph "外部云服务 - External Cloud Services"
+        GeminiAPI[Google Gemini-2.5-Pro API<br/>视觉理解]
+        GPTAPI[OpenAI GPT-4.0 API<br/>自然语言处理]
     end
     
-    AppCache --> RedisCluster
-    SessionCache --> RedisCluster
-    RedisCluster --> Shard1
-    RedisCluster --> Shard2
-    RedisCluster --> Shard3
+    subgraph "本地系统依赖 - Local System Dependencies"
+        Node[Node.js Runtime]
+        Python[Python Runtime]  
+        AndroidSDK[Android SDK]
+        Xcode[Xcode/iOS SDK]
+    end
     
-    Shard1 --> FileCache
-    Shard2 --> DBCache
+    %% 连接关系
+    Cursor --> MCPClient
+    CLI --> MCPClient
+    MCPClient --> Config
+    MCPClient --> APIKeys
     
-    RedisCluster --> LRU
-    RedisCluster --> TTL
-    RedisCluster --> BloomFilter
+    MCPClient --> GeminiAPI
+    MCPClient --> GPTAPI
     
-    style AppCache fill:#e1f5fe
-    style RedisCluster fill:#f3e5f5
-    style LRU fill:#e8f5e8
+    MCPClient --> ADB
+    MCPClient --> WDA
+    
+    ADB --> AndroidDevice
+    ADB --> AndroidEmulator
+    WDA --> iOSDevice
+    WDA --> iOSSimulator
+    
+    MCPClient --> Results
+    MCPClient --> Screenshots
+    MCPClient --> Logs
+    MCPClient --> Cache
+    
+    CLI --> TestCases
+    
+    %% 系统依赖
+    MCPClient --> Node
+    CLI --> Python
+    ADB --> AndroidSDK
+    WDA --> Xcode
+    
+    style Cursor fill:#e1f5fe
+    style CLI fill:#fff3e0  
+    style GeminiAPI fill:#FFA500
+    style GPTAPI fill:#32CD32
+    style AndroidDevice fill:#90EE90
+    style iOSDevice fill:#FFB6C1
 ```
 
-**缓存策略配置**:
-
-```yaml
-cache:
-  levels:
-    l1: # 应用内存缓存
-      size: "256MB"
-      ttl: "5m"
-      eviction: "LRU"
-      
-    l2: # Redis分布式缓存
-      cluster:
-        nodes: ["redis-1:6379", "redis-2:6379", "redis-3:6379"]
-        ttl: "1h"
-        compression: true
-        
-    l3: # 持久化缓存
-      filesystem:
-        path: "/data/cache"
-        size: "10GB"
-        cleanup_interval: "24h"
-        
-  strategies:
-    visual_analysis:
-      key_pattern: "visual:hash:{md5}"
-      ttl: "24h"
-      compress: true
-      
-    element_location:
-      key_pattern: "element:{app}:{page}:{element}"
-      ttl: "1h"
-      invalidate_on_ui_change: true
-      
-    device_state:
-      key_pattern: "device:{device_id}:state"
-      ttl: "5m"
-      real_time_update: true
-```
-
-### 3.3 Storage
-
-#### 3.3.1 Data Structure
-
-##### 3.3.1.1 数据模型设计
+##### 3.2.3.6 本地缓存策略设计
 
 ```mermaid
-erDiagram
-    TestCase ||--o{ TestStep : contains
-    TestCase ||--o{ ExecutionResult : executes
-    ExecutionResult ||--o{ StepResult : contains
-    ExecutionResult ||--o{ Screenshot : captures
-    ExecutionResult }o--|| Device : runs_on
-    Device ||--o{ DeviceCapability : has
-    User ||--o{ TestCase : creates
-    User ||--o{ ExecutionResult : owns
+graph TB
+    subgraph "本地内存缓存 - Local Memory Cache"
+        MemCache[内存缓存<br/>256MB限制]
+        SessionData[会话数据<br/>当前测试执行期间]
+    end
     
-    TestCase {
-        uuid id PK
-        string name
-        text description
-        json metadata
-        string[] tags
-        uuid user_id FK
-        timestamp created_at
-        timestamp updated_at
-        boolean is_active
-    }
+    subgraph "本地文件缓存 - Local File Cache"
+        VisualCache[视觉分析缓存<br/>./cache/visual/]
+        ElementCache[元素定位缓存<br/>./cache/elements/]
+        ScreenCache[截图缓存<br/>./cache/screenshots/]
+        UITreeCache[UI树缓存<br/>./cache/ui-trees/]
+    end
     
-    TestStep {
-        uuid id PK
-        uuid test_case_id FK
-        integer step_order
-        string instruction
-        string expected_state
-        integer timeout_ms
-        integer retry_count
-        json validation_rules
-        timestamp created_at
-    }
+    subgraph "缓存策略 - Cache Strategies"
+        LRU[LRU淘汰策略<br/>内存不足时清理]
+        TTL[TTL过期策略<br/>定时清理]
+        HashKey[内容哈希<br/>避免重复分析]
+    end
     
-    ExecutionResult {
-        uuid id PK
-        uuid test_case_id FK
-        uuid device_id FK
-        string status
-        integer duration_ms
-        json performance_metrics
-        text error_message
-        json ai_analysis_data
-        timestamp started_at
-        timestamp completed_at
-    }
+    subgraph "缓存清理 - Cache Cleanup"
+        AutoCleanup[自动清理<br/>每24小时]
+        ManualCleanup[手动清理<br/>CLI命令]
+        SizeLimit[容量限制<br/>最大1GB]
+    end
     
-    StepResult {
-        uuid id PK
-        uuid execution_result_id FK
-        uuid test_step_id FK
-        string status
-        text actual_state
-        integer duration_ms
-        float confidence_score
-        json ai_decision_data
-        text error_message
-        timestamp executed_at
-    }
+    MemCache --> VisualCache
+    SessionData --> ElementCache
     
-    Device {
-        string id PK
-        string platform
-        string os_version
-        string model
-        string status
-        json capabilities
-        json current_state
-        timestamp last_heartbeat
-        timestamp registered_at
-    }
+    VisualCache --> HashKey
+    ElementCache --> LRU
+    ScreenCache --> TTL
+    UITreeCache --> TTL
     
-    Screenshot {
-        uuid id PK
-        uuid execution_result_id FK
-        uuid step_result_id FK
-        string file_path
-        string file_hash
-        integer file_size
-        json metadata
-        timestamp captured_at
-    }
+    LRU --> AutoCleanup
+    TTL --> ManualCleanup
+    HashKey --> SizeLimit
     
-    User {
-        uuid id PK
-        string username
-        string email
-        json preferences
-        timestamp created_at
-        timestamp last_login
-    }
+    style MemCache fill:#e1f5fe
+    style VisualCache fill:#e8f5e8
+    style LRU fill:#fff3e0
 ```
 
-**详细数据结构定义**:
+**本地缓存配置**:
 
-```typescript
-// 测试用例数据结构
-interface TestCase {
-  id: string;
-  name: string;
-  description: string;
-  steps: TestStep[];
-  metadata: {
-    app_package?: string;
-    target_platform?: 'android' | 'ios' | 'both';
-    complexity_level?: 'simple' | 'medium' | 'complex';
-    estimated_duration?: number;
-  };
-  expectedResult: string;
-  tags: string[];
-  userId: string;
-  createdAt: Date;
-  updatedAt: Date;
-  isActive: boolean;
-  version: number;
-}
+```yaml
+# config.yaml - 本地缓存配置
+cache:
+  memory:
+    max_size: "256MB"
+    ttl: "5m"
+    eviction: "LRU"
+    
+  filesystem:
+    base_path: "./cache"
+    max_size: "1GB"
+    cleanup_interval: "24h"
+    
+  strategies:
+    visual_analysis:
+      path: "./cache/visual"
+      key_pattern: "visual_{md5_hash}"
+      ttl: "24h"
+      enabled: true
+      
+    element_location:
+      path: "./cache/elements"
+      key_pattern: "element_{app}_{page_hash}"
+      ttl: "1h"
+      enabled: true
+      
+    ui_tree:
+      path: "./cache/ui-trees"
+      key_pattern: "tree_{device}_{timestamp}"
+      ttl: "30m"
+      enabled: true
+      
+    screenshots:
+      path: "./cache/screenshots"
+      key_pattern: "screen_{device}_{hash}"
+      ttl: "1h"
+      enabled: true
+      
+# CLI缓存管理命令
+# ai-ui-test cache clean --type=all
+# ai-ui-test cache clean --type=visual --older-than=1d
+# ai-ui-test cache status
+```
 
-interface TestStep {
-  id: string;
-  testCaseId: string;
-  stepOrder: number;
-  instruction: string;
-  expectedState: string;
-  timeout: number;
-  retryCount: number;
-  validationRules: {
-    element_presence?: ElementValidation[];
-    text_validation?: TextValidation[];
-    state_validation?: StateValidation[];
-  };
-  aiHints?: {
-    contextual_info?: string;
-    fallback_strategies?: string[];
-    success_indicators?: string[];
-  };
-  createdAt: Date;
-}
+### 3.3 本地存储 (Local Storage)
 
-// 执行结果数据结构
-interface ExecutionResult {
-  id: string;
-  testCaseId: string;
-  executionId: string;
-  deviceId: string;
-  status: 'pending' | 'running' | 'success' | 'failed' | 'error' | 'cancelled';
-  steps: StepResult[];
-  duration: number;
-  performanceMetrics: {
-    total_api_calls: number;
-    avg_response_time: number;
-    cache_hit_rate: number;
-    element_location_accuracy: number;
-  };
-  screenshots: Screenshot[];
-  errorMessage?: string;
-  aiAnalysisData: {
-    difficulty_score: number;
-    success_factors: string[];
-    failure_reasons?: string[];
-    improvement_suggestions: string[];
-  };
-  startedAt: Date;
-  completedAt?: Date;
-}
+#### 3.3.1 本地文件结构设计
 
-interface StepResult {
-  id: string;
-  executionResultId: string;
-  testStepId: string;
-  status: 'success' | 'failed' | 'skipped' | 'timeout';
-  actualState: string;
-  screenshot: string;
-  duration: number;
-  confidenceScore: number;
-  aiDecisionData: {
-    strategy_used: 'structural' | 'visual' | 'hybrid';
-    element_candidates: ElementCandidate[];
-    final_choice: ElementCandidate;
-    reasoning: string;
-  };
-  errorMessage?: string;
-  executedAt: Date;
-}
+##### 3.3.1.1 本地文件目录结构
 
-// 设备信息数据结构
-interface Device {
-  id: string;
-  platform: 'android' | 'ios';
-  osVersion: string;
-  model: string;
-  manufacturer: string;
-  status: 'available' | 'busy' | 'offline' | 'maintenance';
-  capabilities: DeviceCapability[];
-  currentState: {
-    cpu_usage: number;
-    memory_usage: number;
-    battery_level?: number;
-    network_status: 'connected' | 'disconnected';
-    active_app?: string;
-  };
-  location: {
-    datacenter: string;
-    rack_id?: string;
-    is_physical: boolean;
-  };
-  lastHeartbeat: Date;
-  registeredAt: Date;
-}
+```
+./ai-ui-test/                     # 项目根目录
+├── config/                       # 配置文件
+│   ├── config.yaml              # 主配置文件
+│   ├── devices.yaml             # 设备配置
+│   └── .env                     # API密钥等敏感配置
+├── test-cases/                   # 测试用例目录
+│   ├── login/                   # 功能模块目录
+│   │   ├── login-success.yaml   # 测试用例文件
+│   │   └── login-failure.yaml
+│   └── checkout/
+│       └── checkout-flow.yaml
+├── test-results/                 # 测试结果目录
+│   ├── 2024-11-02/              # 按日期分组
+│   │   ├── 14-30-15_login-success/ # 执行时间_用例名
+│   │   │   ├── result.json      # 执行结果JSON
+│   │   │   ├── steps/           # 步骤详细结果
+│   │   │   │   ├── step-001.json
+│   │   │   │   └── step-002.json
+│   │   │   ├── screenshots/     # 截图文件
+│   │   │   │   ├── step-001-before.png
+│   │   │   │   ├── step-001-after.png
+│   │   │   │   └── final-state.png
+│   │   │   └── logs/            # 执行日志
+│   │   │       └── execution.log
+│   │   └── summary.json         # 当日执行总结
+├── cache/                        # 缓存目录
+│   ├── visual/                  # 视觉分析缓存
+│   ├── elements/                # 元素定位缓存
+│   └── ui-trees/                # UI树缓存
+└── logs/                         # 全局日志
+    ├── system.log
+    └── error.log
+```
 
-interface DeviceCapability {
-  type: 'screen_size' | 'api_level' | 'features' | 'sensors';
-  value: string | number | boolean;
-  description?: string;
+##### 3.3.1.2 本地文件数据格式
+
+```mermaid
+graph TB
+    subgraph "测试用例文件 - Test Case Files"
+        TestCase[测试用例YAML<br/>test-cases/*.yaml]
+        TestSteps[测试步骤<br/>步骤定义和期望]
+    end
+    
+    subgraph "执行结果文件 - Execution Result Files"  
+        ExecResult[执行结果JSON<br/>result.json]
+        StepResults[步骤结果<br/>steps/*.json]
+        Screenshots[截图文件<br/>screenshots/*.png]
+        Logs[执行日志<br/>logs/*.log]
+    end
+    
+    subgraph "配置文件 - Configuration Files"
+        MainConfig[主配置<br/>config.yaml]
+        DeviceConfig[设备配置<br/>devices.yaml]
+        EnvConfig[环境配置<br/>.env]
+    end
+    
+    subgraph "缓存文件 - Cache Files"
+        VisualCache[视觉缓存<br/>cache/visual/*.json]
+        ElementCache[元素缓存<br/>cache/elements/*.json]
+        TreeCache[UI树缓存<br/>cache/ui-trees/*.xml]
+    end
+    
+    TestCase --> ExecResult
+    TestSteps --> StepResults
+    ExecResult --> Screenshots
+    ExecResult --> Logs
+    
+    MainConfig --> DeviceConfig
+    MainConfig --> EnvConfig
+    
+    StepResults --> VisualCache
+    StepResults --> ElementCache
+    Screenshots --> TreeCache
+    
+    style TestCase fill:#e1f5fe
+    style ExecResult fill:#e8f5e8
+    style MainConfig fill:#fff3e0
+    style VisualCache fill:#f3e5f5
+```
+
+##### 3.3.1.3 文件格式示例
+
+**测试用例文件示例** (`test-cases/login/login-success.yaml`):
+
+```yaml
+# 测试用例定义
+name: "用户登录成功流程"
+description: "验证用户使用正确凭据登录应用的完整流程"
+version: "1.0"
+created_at: "2024-11-02T10:00:00Z"
+tags: ["login", "authentication", "critical"]
+
+metadata:
+  app_package: "com.example.app"
+  target_platform: "both"  # android, ios, both
+  complexity_level: "simple"
+  estimated_duration: 30000  # 毫秒
+
+steps:
+  - step_order: 1
+    instruction: "点击登录按钮"
+    expected_state: "进入登录页面，显示用户名和密码输入框"
+    timeout: 10000
+    retry_count: 2
+    ai_hints:
+      contextual_info: "登录按钮通常在主页面的右上角或底部"
+      success_indicators: ["登录页面出现", "输入框可见"]
+      
+  - step_order: 2  
+    instruction: "输入用户名 test@example.com"
+    expected_state: "用户名输入框显示输入的邮箱"
+    timeout: 5000
+    retry_count: 1
+    
+  - step_order: 3
+    instruction: "输入密码 password123"
+    expected_state: "密码输入框显示掩码字符"
+    timeout: 5000
+    retry_count: 1
+    
+  - step_order: 4
+    instruction: "点击登录提交按钮" 
+    expected_state: "登录成功，进入主页面"
+    timeout: 15000
+    retry_count: 2
+    ai_hints:
+      success_indicators: ["主页面加载", "用户头像显示", "欢迎消息"]
+
+expected_result: "用户成功登录，进入应用主页面"
+```
+
+**执行结果文件示例** (`test-results/2024-11-02/14-30-15_login-success/result.json`):
+
+```json
+{
+  "execution_id": "exec_20241102_143015_001",
+  "test_case": {
+    "name": "用户登录成功流程", 
+    "file_path": "test-cases/login/login-success.yaml"
+  },
+  "device": {
+    "id": "emulator-5554",
+    "platform": "android",
+    "os_version": "13.0",
+    "model": "Pixel 7"
+  },
+  "status": "success",
+  "started_at": "2024-11-02T14:30:15Z",
+  "completed_at": "2024-11-02T14:30:45Z",
+  "total_duration_ms": 30000,
+  "performance_metrics": {
+    "total_ai_calls": 8,
+    "avg_response_time_ms": 1200,
+    "cache_hit_rate": 0.75,
+    "element_location_accuracy": 0.95
+  },
+  "steps": [
+    {
+      "step_order": 1,
+      "status": "success",
+      "duration_ms": 3000,
+      "confidence_score": 0.98,
+      "ai_strategy": "hybrid",
+      "screenshot_before": "screenshots/step-001-before.png",
+      "screenshot_after": "screenshots/step-001-after.png",
+      "executed_at": "2024-11-02T14:30:18Z"
+    }
+  ],
+  "ai_analysis": {
+    "difficulty_score": 0.3,
+    "success_factors": ["清晰的UI元素", "稳定的网络", "标准的登录流程"],
+    "improvement_suggestions": []
+  }
 }
 ```
 
-##### 3.3.1.2 数据关系图
+**设备配置文件示例** (`config/devices.yaml`):
+
+```yaml
+# 设备配置
+android:
+  - device_id: "emulator-5554"
+    type: "emulator"
+    display_name: "Android模拟器"
+    capabilities:
+      - "screenshot"
+      - "ui_dump" 
+      - "text_input"
+      - "gestures"
+    adb_config:
+      host: "localhost"
+      port: 5037
+      
+  - device_id: "RF8M802CXXX"
+    type: "physical"  
+    display_name: "Samsung Galaxy S21"
+    capabilities:
+      - "screenshot"
+      - "ui_dump"
+      - "text_input"
+      - "gestures"
+      - "biometric"
+
+ios:
+  - device_id: "auto"
+    type: "simulator"
+    display_name: "iPhone 15 Pro模拟器"
+    capabilities:
+      - "screenshot"
+      - "ui_dump"
+      - "text_input" 
+      - "gestures"
+    wda_config:
+      port: 8100
+      bundle_id: "com.facebook.WebDriverAgentRunner.xctrunner"
+```
+
+#### 3.3.2 本地文件操作
 
 ```mermaid
 graph TB
