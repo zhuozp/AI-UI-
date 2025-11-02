@@ -111,6 +111,60 @@ graph TD
 
 #### 2.1.1 系统总体架构 (层级化双模式AI自动化测试架构)
 
+##### **📋 纯层级架构图 (简洁版)**
+
+```mermaid
+graph TB
+    %% ===== 纯层级结构图 =====
+    subgraph "🔵 Layer 1: 用户交互层 - User Interface Layer"
+        L1[🎯 Cursor IDE | 📋 CLI脚本 | ⚙️ 模型配置器]
+    end
+    
+    subgraph "🟢 Layer 2: 业务应用层 - Business Application Layer" 
+        L2[📡 Mobile-MCP Server | 🚀 扩展Midscene框架 | 🧠 AI模型调度器 | 🌳 UI树结构引擎]
+    end
+    
+    subgraph "🟠 Layer 3: AI服务层 - AI Service Layer"
+        L3[👁️ 公司Gemini-2.5-Pro | 💬 公司GPT-4.0 | 🔄 模型适配器]
+    end
+    
+    subgraph "🟣 Layer 4: 设备操作层 - Device Operation Layer"
+        L4[🤖 Android操作器 | 🍎 iOS操作器 | 📊 设备状态监控 | 🌲 UI树提取器]
+    end
+    
+    subgraph "🟤 Layer 5: 设备驱动层 - Device Driver Layer"
+        L5[ADB服务 | WebDriverAgent]
+    end
+    
+    subgraph "⚫ Layer 6: 设备硬件层 - Device Hardware Layer"
+        L6[📱 Android设备/模拟器 | 📱 iOS设备/模拟器]
+    end
+    
+    subgraph "🔘 Layer 7: 数据存储层 - Data Storage Layer"
+        L7[📋 测试结果存储 | ⚙️ 配置文件管理 | 💾 缓存文件系统]
+    end
+    
+    %% 简洁的层级连接
+    L1 -.-> L2
+    L2 -.-> L3
+    L2 -.-> L4
+    L4 -.-> L5
+    L5 -.-> L6
+    L2 -.-> L7
+    L4 -.-> L7
+    
+    %% 层级样式
+    style L1 fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+    style L2 fill:#e8f5e8,stroke:#4caf50,stroke-width:3px
+    style L3 fill:#fff3e0,stroke:#ff9800,stroke-width:3px
+    style L4 fill:#f3e5f5,stroke:#9c27b0,stroke-width:3px
+    style L5 fill:#ede7f6,stroke:#673ab7,stroke-width:3px
+    style L6 fill:#f5f5f5,stroke:#616161,stroke-width:3px
+    style L7 fill:#eceff1,stroke:#607d8b,stroke-width:3px
+```
+
+##### **🔗 详细组件架构图 (完整版)**
+
 ```mermaid
 graph TB
     %% ===== 第1层：用户交互层 =====
