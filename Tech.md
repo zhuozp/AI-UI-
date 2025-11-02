@@ -11,6 +11,7 @@
 ## 1. Overview
 
 ### 1.1 Background
+随着移动应用的快速迭代和复杂度提升，传统的UI自动化测试方案面临越来越多的挑战。在SDK集成、多版本适配、快速迭代的环境下，传统基于元素ID和XPath的自动化测试维护成本居高不下，测试脚本的稳定性和可维护性成为瓶颈。
 
 #### 1.1.1 Status Quo of Current Technique
 
